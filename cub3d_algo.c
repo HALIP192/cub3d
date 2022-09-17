@@ -6,16 +6,50 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/11 21:07:17 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/17 19:27:53 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 #include "stdio.h"
+#include "math.h"
 #define mapWidth 24
 #define mapHeight 24
 #define screenHeight 640
 #define screenWidth 480
+
+#define RED 0x00ff0000
+#define GREEN 0x0000ff00
+#define BLUE 0x000000ff
+#define YELLOW 0x00ffff00
+
+/* int map[mapWidth][mapHeight] = */ 
+/* { */
+/*   {1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
+/*   {1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3} */
+/* }; */
 
 int map[mapWidth][mapHeight] = 
 {
@@ -23,6 +57,11 @@ int map[mapWidth][mapHeight] =
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
+  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
+  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -30,18 +69,13 @@ int map[mapWidth][mapHeight] =
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
@@ -53,7 +87,7 @@ double ft_abs(double num)
 
 int main(/*data_t data */)
 {
-	double	posX = 6, posY = 22;
+	double	posX = 12, posY = 12;
 	double dirX = -1, dirY = 0;
 	double planeX = 0, planeY = 0.66;
 
@@ -75,22 +109,26 @@ int main(/*data_t data */)
 	int line_lenght;
 	img_ptr = mlx_new_image(mlx_ptr, screenWidth, screenHeight);
 	image = (int *)mlx_get_data_addr(img_ptr, &sn, &line_lenght, &sn);
-	
-	int k = 0;
-	while (k < screenWidth)
-		k++;
+	printf("%d\n", line_lenght);	
 		x = 0;
-		while (x < mapWidth)
+		while (x < screenWidth)
 		{
-			double	cameraX = 2 * x / ((double)mapWidth) - 1;
+			if (x == screenWidth / 2)
+			{
+				printf("lol\n");
+			}
+			printf("...x = %d\n",x);
+			printf("..mapWidth = %d\n", mapWidth);
+			double	cameraX = 2 * x / (double)screenWidth - 1;
 			double	rayDirX = dirX + planeX * cameraX;
 			double	rayDirY = dirY + planeY * cameraX;
+			printf("...cameraX = %f\n",cameraX);
 
 			int	mapX = (int)posX;
 			int	mapY = (int)posY;
 
-			double	deltaDistX = (rayDirX == 0) ? 0 : ft_abs(1 / rayDirX);
-			double	deltaDistY = (rayDirY == 0) ? 0 : ft_abs(1 / rayDirY);
+			double	deltaDistX = (rayDirX == 0) ? 1e30 : ft_abs(1 / rayDirX);
+			double	deltaDistY = (rayDirY == 0) ? 1e30 : ft_abs(1 / rayDirY);
 
 			int	stepX;
 			int	stepY;
@@ -120,7 +158,7 @@ int main(/*data_t data */)
 			}
 			
 
-			int	hit;
+			int	hit = 0;
 			int	side;
 			while (hit == 0)
 			{
@@ -142,25 +180,23 @@ int main(/*data_t data */)
 			double	wallDist;
 
 			if (side == 0)
-				wallDist = (sideDistX - deltaDistX);
+				wallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
 			else
-				wallDist = (sideDistY - deltaDistY);
-			int	height;
+				wallDist = (mapY - posY + (1 - stepY) / 2)  / rayDirY;
 			int	lineHeight;
 
-			height = 24;
-			lineHeight = (int)(height / wallDist);
+			lineHeight = (int)(screenHeight / wallDist);
 
 			int	drawStart;
 			int	drawEnd;
-
-			drawStart = -lineHeight / 2 + height / 2;
+			drawStart = -lineHeight / 2 + screenHeight / 2;
 			if (drawStart < 0)
 				drawStart = 0;
-			drawEnd = lineHeight / 2 + height / 2;
-			if (drawEnd >= height)
-				drawEnd = height - 1;
-
+			drawEnd = lineHeight / 2 + screenHeight / 2;
+			if (drawEnd >= screenHeight)
+				drawEnd = screenHeight - 1;
+			printf("++++++end = %f\n", rayDirX);
+			printf("++++++end = %f\n", mapWidth);
 			int color;
 
 			if (map[mapX][mapY] == 0)
@@ -179,7 +215,6 @@ int main(/*data_t data */)
 //=======================================DROW_LINE=========================
 			int y;
 
-			y = drawStart;
 			/*int y1;
 			int zoom;
 
@@ -191,20 +226,33 @@ int main(/*data_t data */)
 			double y_step;
 
 			y_step = ft_abs((double)(y1 - y));*/;
-
-			while (y > drawEnd)
+			int zoom = 30;
+			y = 0;
+			while (y < screenHeight)
 			{
-					printf("x = %d\n", x);
-					printf("y = %d\n", y);
-					printf("st = %d\n", drawStart);
-					printf("end = %d\n", drawEnd);
+					if (y < (screenHeight) && y < drawStart)
+					{
 
-					printf("<=======================>\n");
-				mlx_pixel_put(mlx_ptr,mlx_win,x, y,color);
-				y--;
+						//mlx_pixel_put(mlx_ptr, mlx_win, x, y, 0x00ffff00);
+						image[y * (line_lenght / 4) + x] = 0x87CEEB;
+					}
+					if (y < screenHeight && y > drawEnd)
+					{
+						image[y * (line_lenght / 4) + x] = 0x34495E;
+					}
+					if (y > drawStart && y < drawEnd)
+					{
+						/* mlx_pixel_put(mlx_ptr, mlx_win, x, y, color); */
+						image[y * (line_lenght / 4) + x] = color;
+					}
+				y++;
 			}
+			//char s;
+			//read(1, &s, 1);
+			mlx_put_image_to_window(mlx_ptr, mlx_win, img_ptr, 0, 0);
 			x++;
-		}
+		
+	}
 //	}
 	mlx_loop(mlx_ptr);
 	return 0;
