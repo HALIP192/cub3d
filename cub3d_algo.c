@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/18 19:15:14 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/18 20:10:13 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,8 @@ int	cub3d_init(data_t *data)
 	i = 0;
 	data->mapWidth = 24;
 	data->mapHeight = 24;
-	data->screenHeight = 480;
-	data->screenWidth = 640;
+	data->screenHeight = 1440;
+	data->screenWidth = 2560;
 	data->map = (int **)malloc(sizeof(int *) * data->mapWidth);
 	if (!data->map)
 		return (1);
@@ -151,8 +151,13 @@ int	cub3d_init(data_t *data)
 	data->initial_planeY = 0.66;
 	data->planeX = data->initial_planeX;
 	data->planeY = data->initial_planeY;
-	data->moveSpeed = 0.5;
-	data->rotSpeed = 0.2;
+	data->moveSpeed = 0.07;
+	data->rotSpeed = 0.03;
+
+	data->mov_forward = 0;
+	data->mov_back = 0;
+	data->rot_left = 0;
+	data->rot_right = 0;
 
 	data->time = 0;
 	data->oldTime = 0;
@@ -323,6 +328,80 @@ int key_act(int key, data_t *data)
 	}
 	if (key == KEY_RIGHT)
 	{
+		buff1 = data->dirX;
+		data->dirX = data->dirX * cos(-data->rotSpeed) - data->dirY * sin(-data->rotSpeed);
+		//data->dirX = data->dirX * 0 + data->dirY * 1;
+		data->dirY = buff1 * sin(-data->rotSpeed) + data->dirY * cos(-data->rotSpeed);
+		//data->dirY = buff1 * -1 + data->dirY * 0;
+		buff2 = data->planeX;
+		data->planeX = data->planeX * cos(-data->rotSpeed) - data->planeY * sin(-data->rotSpeed);
+		//data->planeX = data->planeX * 0 + data->planeY * 1;
+		data->planeY = buff2 * sin(-data->rotSpeed) + data->planeY * cos(-data->rotSpeed);
+		//data->planeY = buff2 * -1 + data->planeY * 0;
+	}
+	if (key == KEY_LEFT)
+	{
+		buff1 = data->dirX;
+		data->dirX = data->dirX * cos(data->rotSpeed) - data->dirY * sin(data->rotSpeed);
+		/* data->dirX = data->dirX * 0 - data->dirY * 1; */
+		data->dirY = buff1 * sin(data->rotSpeed) + data->dirY * cos(data->rotSpeed);
+		/* data->dirY = buff1 * 1 + data->dirY * 0; */
+		buff2 = data->planeX;
+		/* data->planeX = data->planeX * 0 - data->planeY * 1; */
+		data->planeX = data->planeX * cos(data->rotSpeed) - data->planeY * sin(data->rotSpeed);
+		/* data->planeY = buff2 * 1 + data->planeY * 0; */
+		data->planeY = buff2 * sin(data->rotSpeed) + data->planeY * cos(data->rotSpeed);
+	}
+	cub3d(data);
+	return (0);
+}
+
+int	key_hook(int key, data_t *data)
+{
+		if (key == KEY_UP)
+			data->mov_forward = 1;
+		if (key == KEY_DOWN)
+			data->mov_back = 1;
+		if (key == KEY_LEFT)
+			data->rot_left = 1;
+		if (key == KEY_RIGHT)
+			data->rot_right = 1;
+	return (0);
+}
+
+int	action_hook(data_t *data)
+{
+	if (data->mov_forward == 1)
+	{
+		if (data->map[(int)(data->posX + data->dirX * data->moveSpeed)][(int)data->posY] == 0)
+			data->posX += data->dirX * data->moveSpeed;
+		if (data->map[(int)data->posX][(int)(data->posY + data->dirY * data->moveSpeed)] == 0)
+			data->posY += data->dirY * data->moveSpeed;
+		printf("%d\n",data->map[(int)data->posX][(int)data->posY]);
+		int x = 0;
+		int y = 0;
+		while (x < data->mapWidth)
+		{
+			y = 0;
+			while(y < data->mapHeight)
+			{
+				printf("%d ",data->map[x][y]);
+				y++;
+			}
+			printf("\n");
+			x++;
+		}
+		printf("x = %d\ny = %d\n", (int)data->posX, (int)data->posY);
+	}
+	if (data->mov_back == 1)
+	{
+		if (data->map[(int)(data->posX - data->dirX * data->moveSpeed)][(int)data->posY] == 0)
+			data->posX -= data->dirX * data->moveSpeed;
+		if (data->map[(int)data->posX][(int)(data->posY - data->dirY * data->moveSpeed)] == 0)
+			data->posY -= data->dirY * data->moveSpeed;
+	}
+	if (data->rot_right == 1)
+	{
 		double buff1;
 		double buff2;
 
@@ -337,7 +416,7 @@ int key_act(int key, data_t *data)
 		data->planeY = buff2 * sin(-data->rotSpeed) + data->planeY * cos(-data->rotSpeed);
 		//data->planeY = buff2 * -1 + data->planeY * 0;
 	}
-	if (key == KEY_LEFT)
+	if (data->rot_left == 1)
 	{
 		double buff1;
 		double buff2;
@@ -355,22 +434,42 @@ int key_act(int key, data_t *data)
 	}
 	cub3d(data);
 	return (0);
+
+}
+
+int	key_hook_release(int key, data_t *data)
+{
+		if (key == KEY_UP)
+			data->mov_forward = 0;
+		if (key == KEY_DOWN)
+			data->mov_back = 0;
+		if (key == KEY_LEFT)
+			data->rot_left = 0;
+		if (key == KEY_RIGHT)
+			data->rot_right = 0;
+	return (0);
+
 }
 
 int main(/*data_t data */)
 {
-	data_t *data;
+	data_t data;
 
-	data = (data_t *)malloc(sizeof(data_t));
-	if (cub3d_init(data))
+	if (cub3d_init(&data))
 	{
 		printf("Malloc error in cub3d_init(). Stop...\n");
 		exit(12);
 	}
-	cub3d(data);
+	cub3d(&data);
 //	}
-	mlx_key_hook(data->mlx_win, key_act, data);
-	mlx_hook(data->mlx_win, 17, 0, ft_close_window, data);
-	mlx_loop(data->mlx_ptr);
+//	mlx_key_hook(data->mlx_win, key_act, data);
+
+
+	mlx_hook(data.mlx_win, 2, 0, key_hook, &data);
+	mlx_hook(data.mlx_win, 3, 0, key_hook_release, &data);
+	mlx_hook(data.mlx_win, 17, 0, ft_close_window, &data);
+
+	mlx_loop_hook(data.mlx_ptr, action_hook, &data);
+	mlx_loop(data.mlx_ptr);
 	return 0;
 }

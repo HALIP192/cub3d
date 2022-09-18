@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/18 17:09:53 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/18 19:36:06 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,10 @@ typedef struct data_s
 
 	float	moveSpeed;
 	float	rotSpeed;
+	int		mov_forward;
+	int		mov_back;
+	int		rot_right;
+	int		rot_left;
 } data_t;
 
 
