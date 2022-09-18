@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/11 14:04:05 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/18 15:58:54 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,54 @@
 /* #include "minilibx_opengl_20191021/mlx_int.h" */
 /* #include "minilibx_opengl_20191021/mlx_png.h" */
 
-typedef struct map_s
+typedef struct data_s
 {
-	char **map;
-}map_t;
+	int		**map;
+	int		mapWidth;
+	int		mapHeight;
+	int		screenHeight;
+	int 	screenWidth;
+
+	void	*mlx_ptr;
+	void	*mlx_win;
+
+	void	*img_ptr;
+	int		*image;
+	int		line_lenght;
+
+	double	time;
+	double	oldTime;
+
+	double	posX;
+	double	posY;
+	double 	dirX;
+	double	dirY;
+	double	planeX;
+	double	planeY;
+	double	cameraX;
+	double	rayDirX;
+	double	rayDirY;
+	int 	mapX;
+	int		mapY;
+	double	deltaDistX;
+	double	deltaDistY;
+	int		stepX;
+	int		stepY;
+	double	sideDistX;
+	double	sideDistY;
+	double	WallDist;
+	int		lineHeight;
+	int		color;
+	int		side;
+	int		drawStart;
+	int		drawEnd;
+
+	int		x;
+	int		y;
+
+	float	moveSpeed;
+	float	rotSpeed;
+} data_t;
 
 
 #endif

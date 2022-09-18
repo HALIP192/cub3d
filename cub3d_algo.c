@@ -6,22 +6,29 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/17 19:27:53 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/18 16:09:24 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 #include "stdio.h"
 #include "math.h"
-#define mapWidth 24
-#define mapHeight 24
-#define screenHeight 640
-#define screenWidth 480
+#include <string.h>
+/* #define mapWidth 24 */
+/* #define mapHeight 24 */
+/* #define screenHeight 640 */
+/* #define screenWidth 480 */
 
 #define RED 0x00ff0000
 #define GREEN 0x0000ff00
 #define BLUE 0x000000ff
 #define YELLOW 0x00ffff00
+
+#define KEY_LEFT 123
+#define KEY_RIGHT 124
+#define KEY_DOWN 125
+#define KEY_UP 126
+
 
 /* int map[mapWidth][mapHeight] = */ 
 /* { */
@@ -51,7 +58,7 @@
 /*   {1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3} */
 /* }; */
 
-int map[mapWidth][mapHeight] = 
+int map[24][24] = 
 {
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -84,176 +91,236 @@ double ft_abs(double num)
 	return num > 0 ? num : num * (-1);
 }
 
+void	data_cleaner(data_t *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->mapHeight)
+	{
+		free(data->map[i]);
+		i++;
+	}
+	free(data->map);
+}
+
+int	ft_close_window(data_t *data)
+{
+	mlx_destroy_image(data->mlx_ptr, data->img_ptr);
+	mlx_destroy_window(data->mlx_ptr, data->mlx_win);
+	data_cleaner(data);
+	exit(0);
+	return (0);
+}
+
+int	cub3d_init(data_t *data)
+{
+	int i;
+
+	i = 0;
+	data->mapWidth = 24;
+	data->mapHeight = 24;
+	data->screenHeight = 1200;
+	data->screenWidth = 720;
+	data->map = (int **)malloc(sizeof(int *) * data->mapWidth);
+	if (!data->map)
+		return (1);
+	while (i < data->mapHeight)
+	{
+		data->map[i] = (int *)malloc(sizeof(int) * data->mapHeight);
+		if (!data->map[i])
+			return (1);
+		memcpy(data->map[i], map[i], data->mapHeight);
+		i++;
+	}
+	
+	data->posX = 12;
+	data->posY = 12;
+	data->dirX = -1;
+	data->dirY = 0;
+	data->planeX = 0;
+	data->planeY = 0.66;
+	data->moveSpeed = 1;
+	data->rotSpeed = 0.2;
+
+	data->time = 0;
+	data->oldTime = 0;
+	
+	data->mlx_ptr = mlx_init();
+	data->mlx_win = mlx_new_window(data->mlx_ptr, data->screenWidth, data->screenHeight, "cub3d");
+
+	int sn;
+	data->img_ptr = mlx_new_image(data->mlx_ptr, data->screenWidth, data->screenHeight);
+	data->image = (int *)mlx_get_data_addr(data->img_ptr, &sn, &data->line_lenght, &sn);
+	return (0);
+}
+
+
+void	cub3d(data_t *data)
+{		
+	data->x = 0;
+	while (data->x < data->screenWidth)
+	{
+		data->cameraX = 2 * data->x / (double)data->screenWidth - 1;
+		data->rayDirX = data->dirX + data->planeX * data->cameraX;
+		data->rayDirY = data->dirY + data->planeY * data->cameraX;
+		data->mapX = (int)data->posX;
+		data->mapY = (int)data->posY;
+		data->deltaDistX = (data->rayDirX == 0) ? 1e30 : ft_abs(1 / data->rayDirX);
+		data->deltaDistY = (data->rayDirY == 0) ? 1e30 : ft_abs(1 / data->rayDirY);
+		if (data->rayDirX < 0)
+		{
+			data->stepX = -1;
+			data->sideDistX = (data->posX - data->mapX) * data->deltaDistX;
+		}
+		else
+		{
+			data->stepX = 1;
+			data->sideDistX = (data->mapX + 1.0 - data->posX) * data->deltaDistX;
+		}
+		if (data->rayDirY < 0)
+		{	
+			data->stepY = -1;
+			data->sideDistY = (data->posY - data->mapY) * data->deltaDistY;
+		}
+		else
+		{
+			data->stepY = 1;
+			data->sideDistY = (data->mapY + 1.0 - data->posY) * data->deltaDistY;
+		}
+	
+		int	hit = 0;
+		while (hit == 0)
+		{
+			if (data->sideDistX < data->sideDistY)
+			{
+				data->sideDistX += data->deltaDistX;
+				data->mapX += data->stepX;
+				data->side = 0;
+			}
+			else
+			{
+				data->sideDistY += data->deltaDistY;
+				data->mapY += data->stepY;
+				data->side = 1;
+			}
+			if (map[data->mapX][data->mapY] > 0) 
+				hit = 1;
+		}
+			
+		if (data->side == 0)
+			data->WallDist = (data->mapX - data->posX + (1 - data->stepX) / 2) / data->rayDirX;
+		else
+			data->WallDist = (data->mapY - data->posY + (1 - data->stepY) / 2)  / data->rayDirY;
+
+		data->lineHeight = (int)(data->screenHeight / data->WallDist);
+		data->drawStart = -data->lineHeight / 2 + data->screenHeight / 2;
+		if (data->drawStart < 0)
+			data->drawStart = 0;
+		data->drawEnd = data->lineHeight / 2 + data->screenHeight / 2;
+		if (data->drawEnd >= data->screenHeight)
+			data->drawEnd = data->screenHeight - 1;
+				
+		if (map[data->mapX][data->mapY] == 0)
+			data->color = 0x00ffff00; //yellow
+		if (map[data->mapX][data->mapY] == 1)
+			data->color = 0x00ff0000; // red
+		if (map[data->mapX][data->mapY] == 2)
+			data->color = 0x0000ff00; // green
+		if (map[data->mapX][data->mapY] == 3)
+			data->color = 0x000000ff; // blue
+		if (map[data->mapX][data->mapY] == 4)
+			data->color = 0x00ffffff; // white
+	
+		if (data->side == 1)
+			data->color /= 2;
+//=======================================DROW_LINE=========================
+
+		/*int y1;
+		int zoom;
+		zoom = 15;
+		y = 0;
+		y1 = y + 1;
+		y *= zoom;
+		y1 *= zoom;
+		double y_step;
+		y_step = ft_abs((double)(y1 - y));*/;
+		int zoom = 30;
+		data->y = 0;
+		while (data->y < data->screenHeight)
+		{
+			if (data->y < (data->screenHeight) && data->y < data->drawStart)
+			{
+				//mlx_pixel_put(data->mlx_ptr, data->mlx_win, x, y, 0x00ffff00);
+				data->image[data->y * (data->line_lenght / 4) + data->x] = 0x87CEEB;
+			}
+			if (data->y < data->screenHeight && data->y > data->drawEnd)
+			{
+				data->image[data->y * (data->line_lenght / 4) + data->x] = 0x34495E;
+			}
+			if (data->y > data->drawStart && data->y < data->drawEnd)
+			{
+				/* mlx_pixel_put(data->mlx_ptr, data->mlx_win, x, y, data->color); */
+				data->image[data->y * (data->line_lenght / 4) + data->x] = data->color;
+			}
+			data->y++;
+		}
+		//char s;
+		//read(1, &s, 1);
+		data->x++;
+	
+	}
+	mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->img_ptr, 0, 0);
+}
+
+int key_act(int key, data_t *data)
+{
+	double buff1;
+	double buff2;
+
+	printf("key: %d\n", key);
+	if (key == KEY_UP)
+	{
+		if (data->map[(int)(data->posX + data->dirX * data->moveSpeed)][(int)data->posY] == 0)
+			data->posX += data->dirX * data->moveSpeed;
+		if (data->map[(int)data->posX][(int)(data->posY + data->dirY * data->moveSpeed)] == 0)
+			data->posY += data->dirY * data->moveSpeed;
+	}
+	if (key == KEY_DOWN)
+	{
+		if (data->map[(int)(data->posX - data->dirX * data->moveSpeed)][(int)data->posY] == 0)
+			data->posX -= data->dirX * data->moveSpeed;
+		if (data->map[(int)data->posX][(int)(data->posY - data->dirY * data->moveSpeed)] == 0)
+			data->posY -= data->dirY * data->moveSpeed;
+	}
+	if (key == KEY_RIGHT)
+	{
+		buff1 = data->dirX;
+		data->dirX = data->dirX * cos(-data->rotSpeed) - data->dirY * sin(-data->rotSpeed);
+		data->dirY = buff1 * sin(-data->rotSpeed) + data->dirY * cos(-data->rotSpeed);
+		buff2 = data->planeX;
+		data->planeX = data->planeX * cos(-data->rotSpeed) - data->planeY * sin(-data->rotSpeed);
+		data->planeY = buff2 * sin(-data->rotSpeed) + buff2 * cos(-data->rotSpeed);
+	}
+
+	cub3d(data);
+	return (0);
+}
 
 int main(/*data_t data */)
 {
-	double	posX = 12, posY = 12;
-	double dirX = -1, dirY = 0;
-	double planeX = 0, planeY = 0.66;
+	data_t *data;
 
-	double time = 0;
-	double oldTime = 0;
-	int x;
-
-//===========================DROW_FUNCTION=====================================
-	void *mlx_ptr;
-	void *mlx_win;
-
-	mlx_ptr = mlx_init();
-	mlx_win = mlx_new_window(mlx_ptr, screenWidth, screenHeight, "cub3d");
-
-//==========================ACTUAL_ALGO========================================
-	int sn;
-	void *img_ptr;
-	int *image;
-	int line_lenght;
-	img_ptr = mlx_new_image(mlx_ptr, screenWidth, screenHeight);
-	image = (int *)mlx_get_data_addr(img_ptr, &sn, &line_lenght, &sn);
-	printf("%d\n", line_lenght);	
-		x = 0;
-		while (x < screenWidth)
-		{
-			if (x == screenWidth / 2)
-			{
-				printf("lol\n");
-			}
-			printf("...x = %d\n",x);
-			printf("..mapWidth = %d\n", mapWidth);
-			double	cameraX = 2 * x / (double)screenWidth - 1;
-			double	rayDirX = dirX + planeX * cameraX;
-			double	rayDirY = dirY + planeY * cameraX;
-			printf("...cameraX = %f\n",cameraX);
-
-			int	mapX = (int)posX;
-			int	mapY = (int)posY;
-
-			double	deltaDistX = (rayDirX == 0) ? 1e30 : ft_abs(1 / rayDirX);
-			double	deltaDistY = (rayDirY == 0) ? 1e30 : ft_abs(1 / rayDirY);
-
-			int	stepX;
-			int	stepY;
-
-			double	sideDistX;
-			double	sideDistY;
-
-			if (rayDirX < 0)
-			{
-				stepX = -1;
-				sideDistX = (posX - mapX) * deltaDistX;
-			}
-			else
-			{
-				stepX = 1;
-				sideDistX = (mapX + 1.0 - posX) * deltaDistX;
-			}
-			if (rayDirY < 0)
-			{
-				stepY = -1;
-				sideDistY = (posY - mapY) * deltaDistY;
-			}
-			else
-			{
-				stepY = 1;
-				sideDistY = (mapY + 1.0 - posY) * deltaDistY;
-			}
-			
-
-			int	hit = 0;
-			int	side;
-			while (hit == 0)
-			{
-				if (sideDistX < sideDistY)
-				{
-					sideDistX += deltaDistX;
-					mapX += stepX;
-					side = 0;
-				}
-				else
-				{
-					sideDistY += deltaDistY;
-					mapY += stepY;
-					side = 1;
-				}
-				if (map[mapX][mapY] > 0) 
-					hit = 1;
-			}
-			double	wallDist;
-
-			if (side == 0)
-				wallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
-			else
-				wallDist = (mapY - posY + (1 - stepY) / 2)  / rayDirY;
-			int	lineHeight;
-
-			lineHeight = (int)(screenHeight / wallDist);
-
-			int	drawStart;
-			int	drawEnd;
-			drawStart = -lineHeight / 2 + screenHeight / 2;
-			if (drawStart < 0)
-				drawStart = 0;
-			drawEnd = lineHeight / 2 + screenHeight / 2;
-			if (drawEnd >= screenHeight)
-				drawEnd = screenHeight - 1;
-			printf("++++++end = %f\n", rayDirX);
-			printf("++++++end = %f\n", mapWidth);
-			int color;
-
-			if (map[mapX][mapY] == 0)
-				color = 0x00ffff00; //yellow
-			if (map[mapX][mapY] == 1)
-				color = 0x00ff0000; // red
-			if (map[mapX][mapY] == 2)
-				color = 0x0000ff00; // green
-			if (map[mapX][mapY] == 3)
-				color = 0x000000ff; // blue
-			if (map[mapX][mapY] == 4)
-				color = 0x00ffffff; // white
-
-			if (side == 1)
-				color /= 2;
-//=======================================DROW_LINE=========================
-			int y;
-
-			/*int y1;
-			int zoom;
-
-			zoom = 15;
-			y = 0;
-			y1 = y + 1;
-			y *= zoom;
-			y1 *= zoom;
-			double y_step;
-
-			y_step = ft_abs((double)(y1 - y));*/;
-			int zoom = 30;
-			y = 0;
-			while (y < screenHeight)
-			{
-					if (y < (screenHeight) && y < drawStart)
-					{
-
-						//mlx_pixel_put(mlx_ptr, mlx_win, x, y, 0x00ffff00);
-						image[y * (line_lenght / 4) + x] = 0x87CEEB;
-					}
-					if (y < screenHeight && y > drawEnd)
-					{
-						image[y * (line_lenght / 4) + x] = 0x34495E;
-					}
-					if (y > drawStart && y < drawEnd)
-					{
-						/* mlx_pixel_put(mlx_ptr, mlx_win, x, y, color); */
-						image[y * (line_lenght / 4) + x] = color;
-					}
-				y++;
-			}
-			//char s;
-			//read(1, &s, 1);
-			mlx_put_image_to_window(mlx_ptr, mlx_win, img_ptr, 0, 0);
-			x++;
-		
+	data = (data_t *)malloc(sizeof(data_t));
+	if (cub3d_init(data))
+	{
+		printf("Malloc error in cub3d_init(). Stop...\n");
+		exit(12);
 	}
+	cub3d(data);
 //	}
-	mlx_loop(mlx_ptr);
+	mlx_key_hook(data->mlx_win, key_act, data);
+	mlx_hook(data->mlx_win, 17, 0, ft_close_window, data);
+	mlx_loop(data->mlx_ptr);
 	return 0;
 }
