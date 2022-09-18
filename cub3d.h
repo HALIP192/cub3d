@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/18 15:58:54 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/18 17:09:53 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,12 @@ typedef struct data_s
 	double	posY;
 	double 	dirX;
 	double	dirY;
+	double	initial_dirX;
+	double	initial_dirY;
 	double	planeX;
 	double	planeY;
+	double	initial_planeX;
+	double	initial_planeY;
 	double	cameraX;
 	double	rayDirX;
 	double	rayDirY;
