@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/18 19:36:06 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/23 19:55:57 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,12 @@ typedef struct data_s
 	int		mov_back;
 	int		rot_right;
 	int		rot_left;
+	struct	texture{
+		void	**texture_img_ptr;
+		int		**texture_imgs;
+		int		texHeight;
+		int		texWidth;
+	};
 } data_t;
 
 

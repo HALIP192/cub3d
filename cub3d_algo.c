@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/18 20:10:13 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/23 20:13:58 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,8 @@ int	cub3d_init(data_t *data)
 	i = 0;
 	data->mapWidth = 24;
 	data->mapHeight = 24;
-	data->screenHeight = 1440;
-	data->screenWidth = 2560;
+	data->screenHeight = 720;//1440;
+	data->screenWidth = 1080;//2560;
 	data->map = (int **)malloc(sizeof(int *) * data->mapWidth);
 	if (!data->map)
 		return (1);
@@ -171,6 +171,11 @@ int	cub3d_init(data_t *data)
 	return (0);
 }
 
+
+void	set_texture(data_t *data)
+{
+
+}
 
 void	cub3d(data_t *data)
 {		
@@ -236,22 +241,8 @@ void	cub3d(data_t *data)
 		data->drawEnd = data->lineHeight / 2 + data->screenHeight / 2;
 		if (data->drawEnd >= data->screenHeight)
 			data->drawEnd = data->screenHeight - 1;
-				
-		if (data->map[data->mapX][data->mapY] == 0)
-			data->color = 0x00ffff00; //yellow
-		if (data->map[data->mapX][data->mapY] == 1)
-			data->color = 0x00ff0000; // red
-		if (data->map[data->mapX][data->mapY] == 2)
-			data->color = 0x0000ff00; // green
-		if (data->map[data->mapX][data->mapY] == 3)
-			data->color = 0x000000ff; // blue
-		if (data->map[data->mapX][data->mapY] == 4)
-			data->color = 0x00ffffff; // white	
-		if (data->map[data->mapX][data->mapY] == 5)
-			data->color = 0x34495E;
-	
-		if (data->side == 1)
-			data->color /= 2;
+		
+		set_texture(data);
 //=======================================DROW_LINE=========================
 
 		/*int y1;
