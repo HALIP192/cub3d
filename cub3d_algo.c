@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/23 20:13:58 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/24 20:03:52 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,16 @@
 #include "stdio.h"
 #include "math.h"
 #include <string.h>
+#include "printf_colors.h"
 /* #define mapWidth 24 */
 /* #define mapHeight 24 */
 /* #define screenHeight 640 */
 /* #define screenWidth 480 */
 
-#define RED 0x00ff0000
-#define GREEN 0x0000ff00
-#define BLUE 0x000000ff
-#define YELLOW 0x00ffff00
+/* #define RED 0x00ff0000 */
+/* #define GREEN 0x0000ff00 */
+/* #define BLUE 0x000000ff */
+/* #define YELLOW 0x00ffff00 */
 
 #define KEY_LEFT 123
 #define KEY_RIGHT 124
@@ -113,6 +114,44 @@ int	ft_close_window(data_t *data)
 	return (0);
 }
 
+int	init_texture(data_t *data)
+{
+	int i;
+
+	i = 0;
+//	data->texHeight = 64;
+//	data->texWidth = 64;
+	data->texture_img_ptr = (void **)malloc(sizeof(void *) * 8);
+	data->texture_imgs = (int **)malloc(sizeof(int *) * 8);
+	if (!data->texture_img_ptr || !data->texture_imgs)
+		return (1);
+	data->texture_img_ptr[0] = mlx_png_file_to_image(data->mlx_ptr, "pics/greystone.png", &data->texWidth[0], &data->texHeight[0]);
+	data->texture_img_ptr[1] = mlx_png_file_to_image(data->mlx_ptr, "pics/redbrick.png", &data->texWidth[1], &data->texHeight[1]);
+	data->texture_img_ptr[2] = mlx_png_file_to_image(data->mlx_ptr, "pics/wood.png", &data->texWidth[2], &data->texHeight[2]);
+	data->texture_img_ptr[3] = mlx_png_file_to_image(data->mlx_ptr, "pics/bluestone.png", &data->texWidth[3], &data->texHeight[3]);
+	data->texture_img_ptr[4] = mlx_png_file_to_image(data->mlx_ptr, "pics/colorstone.png", &data->texWidth[4], &data->texHeight[4]);
+	data->texture_img_ptr[5] = mlx_png_file_to_image(data->mlx_ptr, "pics/mossy.png", &data->texWidth[5], &data->texHeight[5]);
+	data->texture_img_ptr[6] = mlx_png_file_to_image(data->mlx_ptr, "pics/purplestone.png", &data->texWidth[6], &data->texHeight[6]);
+	data->texture_img_ptr[7] = mlx_png_file_to_image(data->mlx_ptr, "pics/eagle.png", &data->texWidth[7], &data->texHeight[7]);
+	
+	while (i < 8)
+	{
+		if (!data->texture_img_ptr[i])
+		{
+			printf("Error in init texture from file. step = %d. Stop", i);
+			return (1);
+		}
+		data->texture_imgs[i] = (int *)mlx_get_data_addr(data->texture_img_ptr[i], &data->bpp[i], &data->sl[i], &data->end[i]);
+		if (!data->texture_imgs[i])
+		{
+			printf("Error in texture mlx_get_data_addr() step = %d. Stop.\n", i);
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
 int	cub3d_init(data_t *data)
 {
 	int i;
@@ -143,28 +182,29 @@ int	cub3d_init(data_t *data)
 	
 	data->posX = 22.0;
 	data->posY = 12.0;
-	data->initial_dirX = -1.0;
-	data->initial_dirY = 0.0;
-	data->dirX = data->initial_dirX;
-	data->dirY = data->initial_dirY;
-	data->initial_planeX = 0.0;
-	data->initial_planeY = 0.66;
-	data->planeX = data->initial_planeX;
-	data->planeY = data->initial_planeY;
-	data->moveSpeed = 0.07;
-	data->rotSpeed = 0.03;
-
+	data->dirX = -1.0;
+	data->dirY = 0.0;
+	data->planeX = 0.0;
+	data->planeY = 0.66;
 	data->mov_forward = 0;
 	data->mov_back = 0;
 	data->rot_left = 0;
 	data->rot_right = 0;
+	data->moveSpeed = 0.07;
+	data->rotSpeed = 0.03;
 
 	data->time = 0;
 	data->oldTime = 0;
 	
+	if (init_texture(data))
+	{
+		printf("Error while struct initialisation.Stop.\n");
+		exit(12);
+	}
+
 	data->mlx_ptr = mlx_init();
 	data->mlx_win = mlx_new_window(data->mlx_ptr, data->screenWidth, data->screenHeight, "cub3d");
-
+	
 	int sn;
 	data->img_ptr = mlx_new_image(data->mlx_ptr, data->screenWidth, data->screenHeight);
 	data->image = (int *)mlx_get_data_addr(data->img_ptr, &sn, &data->line_lenght, &sn);
@@ -244,6 +284,29 @@ void	cub3d(data_t *data)
 		
 		set_texture(data);
 //=======================================DROW_LINE=========================
+		
+		int		texNum;
+		double	wallX;
+		int		texX;
+
+		texNum = data->map[data->mapX][data->mapY] - 1;
+		if (data->side == 0)
+			wallX = data->posY + data->WallDist * data->rayDirY;
+		else
+			wallX = data->posX + data->WallDist * data->rayDirX;
+		wallX -= floor(wallX);
+
+		texX = (int)(wallX * (double)(data->texWidth[texNum]));
+		if (data->side == 0 && data->rayDirX > 0)
+			texX = data->texWidth[texNum] - texX - 1;
+		if (data->side == 1 && data->rayDirY < 0)
+			texX = data->texWidth[texNum] - texX - 1;
+
+		double	step;
+		double	texPos;
+
+		step = 1.0 * data->texHeight[texNum] / data->lineHeight;
+		texPos = (data->drawStart - data->screenHeight / 2 + data->lineHeight / 2) * step;
 
 		/*int y1;
 		int zoom;
@@ -254,7 +317,7 @@ void	cub3d(data_t *data)
 		y1 *= zoom;
 		double y_step;
 		y_step = ft_abs((double)(y1 - y));*/;
-		int zoom = 30;
+		int texY;
 		data->y = 0;
 		while (data->y < data->screenHeight)
 		{
@@ -270,7 +333,12 @@ void	cub3d(data_t *data)
 			if (data->y >= data->drawStart && data->y <= data->drawEnd)
 			{
 				/* mlx_pixel_put(data->mlx_ptr, data->mlx_win, x, y, data->color); */
-				data->image[data->y * (data->line_lenght / 4) + data->x] = data->color;
+				texY = (int)texPos & (data->texHeight[texNum] - 1);
+				texPos += step;
+				if (data->side == 1)
+					data->image[data->y * (data->line_lenght / 4) + data->x] = (data->texture_imgs[texNum][data->texHeight[texNum] * texY + texX] >> 1);
+				data->image[data->y * (data->line_lenght / 4) + data->x] = data->texture_imgs[texNum][data->texHeight[texNum] * texY + texX];
+
 			}
 			data->y++;
 		}
@@ -280,71 +348,6 @@ void	cub3d(data_t *data)
 	
 	}
 	mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->img_ptr, 0, 0);
-}
-
-int key_act(int key, data_t *data)
-{
-	double buff1;
-	double buff2;
-
-	printf("key: %d\n", key);
-	if (key == KEY_UP)
-	{
-		if (data->map[(int)(data->posX + data->dirX * data->moveSpeed)][(int)data->posY] == 0)
-			data->posX += data->dirX * data->moveSpeed;
-		if (data->map[(int)data->posX][(int)(data->posY + data->dirY * data->moveSpeed)] == 0)
-			data->posY += data->dirY * data->moveSpeed;
-		printf("%d\n",data->map[(int)data->posX][(int)data->posY]);
-		int x = 0;
-		int y = 0;
-		while (x < data->mapWidth)
-		{
-			y = 0;
-			while(y < data->mapHeight)
-			{
-				printf("%d ",data->map[x][y]);
-				y++;
-			}
-			printf("\n");
-			x++;
-		}
-		printf("x = %d\ny = %d\n", (int)data->posX, (int)data->posY);
-	}
-	if (key == KEY_DOWN)
-	{
-		if (data->map[(int)(data->posX - data->dirX * data->moveSpeed)][(int)data->posY] == 0)
-			data->posX -= data->dirX * data->moveSpeed;
-		if (data->map[(int)data->posX][(int)(data->posY - data->dirY * data->moveSpeed)] == 0)
-			data->posY -= data->dirY * data->moveSpeed;
-	}
-	if (key == KEY_RIGHT)
-	{
-		buff1 = data->dirX;
-		data->dirX = data->dirX * cos(-data->rotSpeed) - data->dirY * sin(-data->rotSpeed);
-		//data->dirX = data->dirX * 0 + data->dirY * 1;
-		data->dirY = buff1 * sin(-data->rotSpeed) + data->dirY * cos(-data->rotSpeed);
-		//data->dirY = buff1 * -1 + data->dirY * 0;
-		buff2 = data->planeX;
-		data->planeX = data->planeX * cos(-data->rotSpeed) - data->planeY * sin(-data->rotSpeed);
-		//data->planeX = data->planeX * 0 + data->planeY * 1;
-		data->planeY = buff2 * sin(-data->rotSpeed) + data->planeY * cos(-data->rotSpeed);
-		//data->planeY = buff2 * -1 + data->planeY * 0;
-	}
-	if (key == KEY_LEFT)
-	{
-		buff1 = data->dirX;
-		data->dirX = data->dirX * cos(data->rotSpeed) - data->dirY * sin(data->rotSpeed);
-		/* data->dirX = data->dirX * 0 - data->dirY * 1; */
-		data->dirY = buff1 * sin(data->rotSpeed) + data->dirY * cos(data->rotSpeed);
-		/* data->dirY = buff1 * 1 + data->dirY * 0; */
-		buff2 = data->planeX;
-		/* data->planeX = data->planeX * 0 - data->planeY * 1; */
-		data->planeX = data->planeX * cos(data->rotSpeed) - data->planeY * sin(data->rotSpeed);
-		/* data->planeY = buff2 * 1 + data->planeY * 0; */
-		data->planeY = buff2 * sin(data->rotSpeed) + data->planeY * cos(data->rotSpeed);
-	}
-	cub3d(data);
-	return (0);
 }
 
 int	key_hook(int key, data_t *data)
@@ -360,6 +363,32 @@ int	key_hook(int key, data_t *data)
 	return (0);
 }
 
+void	print_map(data_t *data)
+{
+	printf("%d\n",data->map[(int)data->posX][(int)data->posY]);
+	int x = 0;
+	int y = 0;
+	while (x < data->mapWidth)
+	{
+		y = 0;
+		while(y < data->mapHeight)
+		{
+			if (x == (int)data->posX && y == (int)data->posY)
+				printf( GREEN "X " RESET );
+			else if (data->map[x][y] > 0 && data->map[x][y] != 1)
+				printf(RED "%d " RESET, data->map[x][y]);
+			else if (data->map[x][y] == 1)
+				printf(BLUE "1 " RESET);
+			else
+				printf("%d ",data->map[x][y]);
+			y++;
+		}
+		printf("\n");
+		x++;
+	}
+	printf("x = %d\ny = %d\n", (int)data->posX, (int)data->posY);
+}
+
 int	action_hook(data_t *data)
 {
 	if (data->mov_forward == 1)
@@ -368,21 +397,7 @@ int	action_hook(data_t *data)
 			data->posX += data->dirX * data->moveSpeed;
 		if (data->map[(int)data->posX][(int)(data->posY + data->dirY * data->moveSpeed)] == 0)
 			data->posY += data->dirY * data->moveSpeed;
-		printf("%d\n",data->map[(int)data->posX][(int)data->posY]);
-		int x = 0;
-		int y = 0;
-		while (x < data->mapWidth)
-		{
-			y = 0;
-			while(y < data->mapHeight)
-			{
-				printf("%d ",data->map[x][y]);
-				y++;
-			}
-			printf("\n");
-			x++;
-		}
-		printf("x = %d\ny = %d\n", (int)data->posX, (int)data->posY);
+		print_map(data);
 	}
 	if (data->mov_back == 1)
 	{
@@ -390,6 +405,7 @@ int	action_hook(data_t *data)
 			data->posX -= data->dirX * data->moveSpeed;
 		if (data->map[(int)data->posX][(int)(data->posY - data->dirY * data->moveSpeed)] == 0)
 			data->posY -= data->dirY * data->moveSpeed;
+		print_map(data);
 	}
 	if (data->rot_right == 1)
 	{

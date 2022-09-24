@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/23 19:55:57 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/24 18:03:06 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,8 @@ typedef struct data_s
 	double	posY;
 	double 	dirX;
 	double	dirY;
-	double	initial_dirX;
-	double	initial_dirY;
 	double	planeX;
 	double	planeY;
-	double	initial_planeX;
-	double	initial_planeY;
 	double	cameraX;
 	double	rayDirX;
 	double	rayDirY;
@@ -80,12 +76,14 @@ typedef struct data_s
 	int		mov_back;
 	int		rot_right;
 	int		rot_left;
-	struct	texture{
-		void	**texture_img_ptr;
-		int		**texture_imgs;
-		int		texHeight;
-		int		texWidth;
-	};
+
+	void	**texture_img_ptr;
+	int		**texture_imgs;
+	int		texHeight[8];
+	int		texWidth[8];
+	int		bpp[8];
+	int		end[8];
+	int		sl[8];
 } data_t;
 
 
