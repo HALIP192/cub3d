@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/24 20:03:52 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/24 21:23:47 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,22 @@ int map[24][24] =
   {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
+/* #define MOUSE_LEFT 1 */
+/* #define MOUSE_WHEEL 2 */
+/* #define MOUSE_RIGHT 3 */
+/* #define MOUSE_WHEEL_DOWN 4 */
+/* #define MOUSE_WHEEL_UP 5 */
+
+/* #define key_press 2 */
+/* #define key_release 3 */
+/* #define mouse_press 4 */
+/* #define mouse_release 5 */
+/* #define mouse_move 6 */
+/* #define mouse_enter_window 7 */
+/* #define mouse_leave_window 8 */
+/* #define focus_in 9 */
+/* #define focus_out 10 */
+/* #define window_close 17 */
 
 double ft_abs(double num)
 {
@@ -123,6 +139,11 @@ int	init_texture(data_t *data)
 //	data->texWidth = 64;
 	data->texture_img_ptr = (void **)malloc(sizeof(void *) * 8);
 	data->texture_imgs = (int **)malloc(sizeof(int *) * 8);
+	data->texWidth = (int *)malloc(sizeof(int) * 8);
+	data->texHeight = (int *)malloc(sizeof(int) * 8);
+	data->bpp = (int *)malloc(sizeof(int) * 8);
+	data->end = (int *)malloc(sizeof(int) * 8);
+	data->sl = (int *)malloc(sizeof(int) * 8);
 	if (!data->texture_img_ptr || !data->texture_imgs)
 		return (1);
 	data->texture_img_ptr[0] = mlx_png_file_to_image(data->mlx_ptr, "pics/greystone.png", &data->texWidth[0], &data->texHeight[0]);
@@ -211,10 +232,8 @@ int	cub3d_init(data_t *data)
 	return (0);
 }
 
-
 void	set_texture(data_t *data)
 {
-
 }
 
 void	cub3d(data_t *data)
@@ -430,13 +449,9 @@ int	action_hook(data_t *data)
 
 		buff1 = data->dirX;
 		data->dirX = data->dirX * cos(data->rotSpeed) - data->dirY * sin(data->rotSpeed);
-		/* data->dirX = data->dirX * 0 - data->dirY * 1; */
 		data->dirY = buff1 * sin(data->rotSpeed) + data->dirY * cos(data->rotSpeed);
-		/* data->dirY = buff1 * 1 + data->dirY * 0; */
 		buff2 = data->planeX;
-		/* data->planeX = data->planeX * 0 - data->planeY * 1; */
 		data->planeX = data->planeX * cos(data->rotSpeed) - data->planeY * sin(data->rotSpeed);
-		/* data->planeY = buff2 * 1 + data->planeY * 0; */
 		data->planeY = buff2 * sin(data->rotSpeed) + data->planeY * cos(data->rotSpeed);
 	}
 	cub3d(data);
@@ -458,6 +473,24 @@ int	key_hook_release(int key, data_t *data)
 
 }
 
+/* int mouse_action(int x, int y, data_t *data) */
+/* { */
+/* 	int	dx; */
+/* 	int	dy; */
+/* 	int	buff1; */
+
+/* 	dx = x - data->mouse_x; */
+/* 	dy = y - data->mouse_y; */
+	
+/* 	buff1 = data->dirX; */
+/* 	data->dirX = data->dirX * cos(data->rotSpeed) - data->dirY * sin(data->rotSpeed); */
+/* 	data->dirY = buff1 * sin(data->rotSpeed) + data->dirY * cos(data->rotSpeed); */
+/* 	buff1 = data->planeX; */
+/* 	data->planeX = data->planeX * cos(data->rotSpeed) - data->planeY * sin(data->rotSpeed); */
+/* 	data->planeY = buff1 * sin(data->rotSpeed) + data->planeY * cos(data->rotSpeed); */
+/* 	return (0); */
+/* } */
+
 int main(/*data_t data */)
 {
 	data_t data;
@@ -475,6 +508,7 @@ int main(/*data_t data */)
 	mlx_hook(data.mlx_win, 2, 0, key_hook, &data);
 	mlx_hook(data.mlx_win, 3, 0, key_hook_release, &data);
 	mlx_hook(data.mlx_win, 17, 0, ft_close_window, &data);
+	//mlx_hook(data.mlx_win, mouse_move, 0, mouse_action, &data);
 
 	mlx_loop_hook(data.mlx_ptr, action_hook, &data);
 	mlx_loop(data.mlx_ptr);
