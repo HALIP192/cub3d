@@ -6,11 +6,8 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-<<<<<<< Updated upstream
-/*   Updated: 2022/09/24 21:26:21 by ntitan           ###   ########.fr       */
-=======
+/*   Updated: 2022/09/24 21:39:47 by ntitan           ###   ########.fr       */
 /*   Updated: 2022/09/24 21:24:16 by ntitan           ###   ########.fr       */
->>>>>>> Stashed changes
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,24 +83,12 @@ typedef struct data_s
 
 	void	**texture_img_ptr;
 	int		**texture_imgs;
-<<<<<<< Updated upstream
-	int		texHeight[8];
-	int		texWidth[8];
-	int		bpp[8];
-	int		end[8];
-	int		sl[8];
-
-	int		mouse_hook;
-	int		rofl;
-=======
 	int		*texHeight;
 	int		*texWidth;
 	int		*bpp;
 	int		*end;
 	int		*sl;
 
-
->>>>>>> Stashed changes
 } data_t;
 
 

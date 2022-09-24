@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/24 21:23:47 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/24 22:07:38 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,22 +86,22 @@ int map[24][24] =
   {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
-/* #define MOUSE_LEFT 1 */
-/* #define MOUSE_WHEEL 2 */
-/* #define MOUSE_RIGHT 3 */
-/* #define MOUSE_WHEEL_DOWN 4 */
-/* #define MOUSE_WHEEL_UP 5 */
+#define MOUSE_LEFT 1
+#define MOUSE_WHEEL 2
+#define MOUSE_RIGHT 3
+#define MOUSE_WHEEL_DOWN 4
+#define MOUSE_WHEEL_UP 5
 
-/* #define key_press 2 */
-/* #define key_release 3 */
-/* #define mouse_press 4 */
-/* #define mouse_release 5 */
-/* #define mouse_move 6 */
-/* #define mouse_enter_window 7 */
-/* #define mouse_leave_window 8 */
-/* #define focus_in 9 */
-/* #define focus_out 10 */
-/* #define window_close 17 */
+#define key_press 2
+#define key_release 3
+#define mouse_press 4
+#define mouse_release 5
+#define mouse_move 6
+#define mouse_enter_window 7
+#define mouse_leave_window 8
+#define focus_in 9
+#define focus_out 10
+#define window_close 17
 
 double ft_abs(double num)
 {
@@ -214,8 +214,11 @@ int	cub3d_init(data_t *data)
 	data->moveSpeed = 0.07;
 	data->rotSpeed = 0.03;
 
+
 	data->time = 0;
 	data->oldTime = 0;
+	data->mouse_x = 0;
+	data->mouse_y = 0;
 	
 	if (init_texture(data))
 	{
@@ -408,6 +411,21 @@ void	print_map(data_t *data)
 	printf("x = %d\ny = %d\n", (int)data->posX, (int)data->posY);
 }
 
+
+
+void	rotate(data_t *data, double angle)
+{
+	double buff1;
+	double buff2;
+
+	buff1 = data->dirX;
+	data->dirX = data->dirX * cos(angle) - data->dirY * sin(angle);
+	data->dirY = buff1 * sin(angle) + data->dirY * cos(angle);
+	buff2 = data->planeX;
+	data->planeX = data->planeX * cos(angle) - data->planeY * sin(angle);
+	data->planeY = buff2 * sin(angle) + data->planeY * cos(angle);
+}
+
 int	action_hook(data_t *data)
 {
 	if (data->mov_forward == 1)
@@ -428,31 +446,11 @@ int	action_hook(data_t *data)
 	}
 	if (data->rot_right == 1)
 	{
-		double buff1;
-		double buff2;
-
-		buff1 = data->dirX;
-		data->dirX = data->dirX * cos(-data->rotSpeed) - data->dirY * sin(-data->rotSpeed);
-		//data->dirX = data->dirX * 0 + data->dirY * 1;
-		data->dirY = buff1 * sin(-data->rotSpeed) + data->dirY * cos(-data->rotSpeed);
-		//data->dirY = buff1 * -1 + data->dirY * 0;
-		buff2 = data->planeX;
-		data->planeX = data->planeX * cos(-data->rotSpeed) - data->planeY * sin(-data->rotSpeed);
-		//data->planeX = data->planeX * 0 + data->planeY * 1;
-		data->planeY = buff2 * sin(-data->rotSpeed) + data->planeY * cos(-data->rotSpeed);
-		//data->planeY = buff2 * -1 + data->planeY * 0;
+		rotate(data, -(data->rotSpeed));
 	}
 	if (data->rot_left == 1)
 	{
-		double buff1;
-		double buff2;
-
-		buff1 = data->dirX;
-		data->dirX = data->dirX * cos(data->rotSpeed) - data->dirY * sin(data->rotSpeed);
-		data->dirY = buff1 * sin(data->rotSpeed) + data->dirY * cos(data->rotSpeed);
-		buff2 = data->planeX;
-		data->planeX = data->planeX * cos(data->rotSpeed) - data->planeY * sin(data->rotSpeed);
-		data->planeY = buff2 * sin(data->rotSpeed) + data->planeY * cos(data->rotSpeed);
+		rotate(data, data->rotSpeed);
 	}
 	cub3d(data);
 	return (0);
@@ -473,23 +471,21 @@ int	key_hook_release(int key, data_t *data)
 
 }
 
-/* int mouse_action(int x, int y, data_t *data) */
-/* { */
-/* 	int	dx; */
-/* 	int	dy; */
-/* 	int	buff1; */
+int mouse_action(int x, int y, data_t *data)
+{
+	double	dx;
+	double	dy;
 
-/* 	dx = x - data->mouse_x; */
-/* 	dy = y - data->mouse_y; */
+	dx = (x - data->mouse_x) * 0.05;
+	dy = y - data->mouse_y;
 	
-/* 	buff1 = data->dirX; */
-/* 	data->dirX = data->dirX * cos(data->rotSpeed) - data->dirY * sin(data->rotSpeed); */
-/* 	data->dirY = buff1 * sin(data->rotSpeed) + data->dirY * cos(data->rotSpeed); */
-/* 	buff1 = data->planeX; */
-/* 	data->planeX = data->planeX * cos(data->rotSpeed) - data->planeY * sin(data->rotSpeed); */
-/* 	data->planeY = buff1 * sin(data->rotSpeed) + data->planeY * cos(data->rotSpeed); */
-/* 	return (0); */
-/* } */
+	rotate(data, data->rotSpeed * dx);
+
+	data->mouse_x = x;
+	data->mouse_y = y;
+
+	return (0);
+}
 
 int main(/*data_t data */)
 {
@@ -508,7 +504,7 @@ int main(/*data_t data */)
 	mlx_hook(data.mlx_win, 2, 0, key_hook, &data);
 	mlx_hook(data.mlx_win, 3, 0, key_hook_release, &data);
 	mlx_hook(data.mlx_win, 17, 0, ft_close_window, &data);
-	//mlx_hook(data.mlx_win, mouse_move, 0, mouse_action, &data);
+	mlx_hook(data.mlx_win, mouse_move, 0, mouse_action, &data);
 
 	mlx_loop_hook(data.mlx_ptr, action_hook, &data);
 	mlx_loop(data.mlx_ptr);
