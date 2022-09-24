@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/24 18:03:06 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/24 21:26:21 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,9 @@ typedef struct data_s
 	int		bpp[8];
 	int		end[8];
 	int		sl[8];
+
+	int		mouse_hook;
+	int		rofl;
 } data_t;
 
 
