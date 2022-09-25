@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/24 21:39:47 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/25 18:52:33 by ntitan           ###   ########.fr       */
 /*   Updated: 2022/09/24 21:24:16 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -21,6 +21,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "minilibx_opengl_20191021/mlx.h"
+
+#define SKY 0x87CEED
+#define BITUMEN 0x34495E
 /* #include "minilibx_opengl_20191021/mlx_opengl.h" */
 /* #include "minilibx_opengl_20191021/mlx_new_window.h" */
 /* #include "minilibx_opengl_20191021/mlx_int.h" */
@@ -32,13 +35,7 @@ typedef struct data_s
 	int		mapWidth;
 	int		mapHeight;
 	int		screenHeight;
-	int 	screenWidth;
-
-	void	*mlx_ptr;
-	void	*mlx_win;
-
-	void	*img_ptr;
-	int		*image;
+	int		screenWidth;
 	int		line_lenght;
 
 	double	time;
@@ -46,14 +43,14 @@ typedef struct data_s
 
 	double	posX;
 	double	posY;
-	double 	dirX;
+	double	dirX;
 	double	dirY;
 	double	planeX;
 	double	planeY;
 	double	cameraX;
 	double	rayDirX;
 	double	rayDirY;
-	int 	mapX;
+	int		mapX;
 	int		mapY;
 	double	deltaDistX;
 	double	deltaDistY;
@@ -71,6 +68,23 @@ typedef struct data_s
 	int		x;
 	int		y;
 
+
+} data_t;
+
+typedef struct texture_s
+{
+	void	**img_ptr;
+	int		**imgs;
+	int		*height;
+	int		*width;
+	int		*bpp;
+	int		*end;
+	int		*sl;
+
+} texture_t;
+
+typedef struct mouseAction_s
+{
 	float	moveSpeed;
 	float	rotSpeed;
 	int		mov_forward;
@@ -79,17 +93,17 @@ typedef struct data_s
 	int		rot_left;
 	int		mouse_x;
 	int		mouse_y;
+} mouseAction_t;
 
+typedef struct mlxData_s
+{
 
-	void	**texture_img_ptr;
-	int		**texture_imgs;
-	int		*texHeight;
-	int		*texWidth;
-	int		*bpp;
-	int		*end;
-	int		*sl;
+	void	*mlx_ptr;
+	void	*mlx_win;
 
-} data_t;
+	void	*img_ptr;
+	int		*image;
+} mlxData_t;
 
 
 #endif
