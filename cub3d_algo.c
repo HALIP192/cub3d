@@ -6,11 +6,11 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/25 19:14:51 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/09/30 20:54:51 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "includes/cub3d.h"
 #include "stdio.h"
 #include "math.h"
 #include <string.h>
@@ -167,33 +167,45 @@ int	ft_close_window(data_t *data)
 	return (0);
 }
 
-int	init_texture(texture_t *data, mlxData_t *mlxData)
+int	png_to_img(texture_t *data, mlxData_t *mlxData, char ***texture_split, int i)
+{
+	if (texture_split[i][0][0] == 'N' && texture_split[i][0][1] == 'O')
+		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+	else if (texture_split[i][0][0] == 'S' && texture_split[i][0][1] == 'O')
+		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+	else if (texture_split[i][0][0] == 'W' && texture_split[i][0][1] == 'E')
+		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+	else if (texture_split[i][0][0] == 'E' && texture_split[i][0][1] == 'A')
+		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+	else if (texture_split[i][0][0] == 'F')
+		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+	else if (texture_split[i][0][0] == 'C')
+		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+	else
+	{
+		printf("Invalid init file \n");
+		return (1);
+	}
+	return (0);
+}
+
+int	init_texture(texture_t *data, mlxData_t *mlxData, char ***texture_split)
 {
 	int i;
 
 	i = 0;
-//	data->texHeight = 64;
-//	data->texWidth = 64;
-	data->img_ptr = (void **)malloc(sizeof(void *) * 8);
-	data->imgs = (int **)malloc(sizeof(int *) * 8);
-	data->width = (int *)malloc(sizeof(int) * 8);
-	data->height = (int *)malloc(sizeof(int) * 8);
-	data->bpp = (int *)malloc(sizeof(int) * 8);
-	data->end = (int *)malloc(sizeof(int) * 8);
-	data->sl = (int *)malloc(sizeof(int) * 8);
-	if (!data->img_ptr || !data->imgs)
-		return (1);
-	data->img_ptr[0] = mlx_png_file_to_image(mlxData->mlx_ptr, "pics/greystone.png", &data->width[0], &data->height[0]);
-	data->img_ptr[1] = mlx_png_file_to_image(mlxData->mlx_ptr, "pics/redbrick.png", &data->width[1], &data->height[1]);
-	data->img_ptr[2] = mlx_png_file_to_image(mlxData->mlx_ptr, "pics/wood.png", &data->width[2], &data->height[2]);
-	data->img_ptr[3] = mlx_png_file_to_image(mlxData->mlx_ptr, "pics/bluestone.png", &data->width[3], &data->height[3]);
-	data->img_ptr[4] = mlx_png_file_to_image(mlxData->mlx_ptr, "pics/colorstone.png", &data->width[4], &data->height[4]);
-	data->img_ptr[5] = mlx_png_file_to_image(mlxData->mlx_ptr, "pics/mossy.png", &data->width[5], &data->height[5]);
-	data->img_ptr[6] = mlx_png_file_to_image(mlxData->mlx_ptr, "pics/purplestone.png", &data->width[6], &data->height[6]);
-	data->img_ptr[7] = mlx_png_file_to_image(mlxData->mlx_ptr, "pics/eagle.png", &data->width[7], &data->height[7]);
+	data->img_ptr = (void **)malloc(sizeof(void *) * 4);
+	data->imgs = (int **)malloc(sizeof(int *) * 4);
+	data->width = (int *)malloc(sizeof(int) * 4);
+	data->height = (int *)malloc(sizeof(int) * 4);
+	data->bpp = (int *)malloc(sizeof(int) * 4);
+	data->end = (int *)malloc(sizeof(int) * 4);
+	data->sl = (int *)malloc(sizeof(int) * 4); 
 	
-	while (i < 8)
+	while (texture_split[i])
 	{
+		if (png_to_img(data, mlxData, texture_split, i))
+			return (1);
 		if (!data->img_ptr[i])
 		{
 			printf("Error in init texture from file. step = %d. Stop", i);
@@ -234,18 +246,36 @@ void	init_mlxData(mlxData_t *data, data_t *map_data)
 
 }
 
-int	map_init(data_t *data)
+void	init_position(data_t *data)
+{
+	data->posX = 22.0;
+	data->posY = 12.0;
+	data->dirX = -1.0;
+	data->dirY = 0.0;
+	data->planeX = 0.0;
+	data->planeY = 0.66;
+}
+
+void	init_screen_and_map(data_t *data)
+{
+	data->mapWidth = 24;
+	data->mapHeight = 24;
+	data->screenHeight = 720;//1440;
+	data->screenWidth = 1080;//2560;
+
+
+}
+
+int	map_init(data_t *data, int fd)
 {
 	int	i;
 
 	i = 0;
-	data->mapWidth = 24;
-	data->mapHeight = 24;
-
+	init_screen_and_map(data);
 	data->map = (int **)malloc(sizeof(int *) * data->mapWidth);
 	if (!data->map)
 		return (1);
-	while (i < data->mapHeight)
+	while (i < data->mapWidth)
 	{
 		data->map[i] = (int *)malloc(sizeof(int) * data->mapHeight);
 		if (!data->map[i])
@@ -260,33 +290,87 @@ int	map_init(data_t *data)
 		printf("\n");
 		i++;
 	}
-	
-	data->posX = 22.0;
-	data->posY = 12.0;
-	data->dirX = -1.0;
-	data->dirY = 0.0;
-	data->planeX = 0.0;
-	data->planeY = 0.66;
+	init_position(data);
 	return (0);
-
 }
 
-int	cub3d_init(data_t *map_data, mouseAction_t *mouse, mlxData_t *mlx_data, texture_t *texture)
+mouseAction_t *mouse_global(void)
 {
+	static mouseAction_t	mouse;
 
-	map_data->screenHeight = 720;//1440;
-	map_data->screenWidth = 1080;//2560;
+	return (&mouse);
+}
 
-	map_init(map_data);
+int	is_line_valid(char *line)
+{
+	if ((line[0] == 'N' && line[1] == 'O') ||
+		(line[0] == 'S' && line[1] == 'O') ||
+		(line[0] == 'W' && line[1] == 'E') ||
+		(line[0] == 'E' && line[1] == 'A') ||
+		(line[0] == 'F') || (line[0] == 'C'))
+		return (1);
+	return (0);
+}
+
+char ***get_texture_info(int fd)
+{
+	char	***mas;
+	char	*line;
+	int		cnt;
+
+	mas = (char ***)malloc(sizeof(char **) * 7);
+	mas[6] = NULL;
+	line = get_next_line(fd);
+	cnt = 0;
+	while (cnt != 5)
+	{
+		if (line[0] == '\n')
+			continue;
+		if (is_line_valid(line))
+			cnt++;
+		else
+			return NULL;
+		mas[0] = ft_split(line, ' ');
+		if (cnt != 5)
+			line = get_next_line(fd);
+	}
+	return (mas);
+}
+
+int	cub3d_init(data_t *map_data, char **argv)
+{
+	mouseAction_t	*mouse;
+	mlxData_t		*mlx_data;
+	texture_t		*texture;
+	int				fd;
+	char			***texture_split;
+
+	mouse = mouse_global();
+	mlx_data = mlxData_global();
+	texture = texture_global();
+	
+	fd = open(argv[1], O_RDONLY);
+	if (!fd)
+	{
+		printf("Cann't open file.\n");
+		return (1);
+	}
+	texture_split = get_texture_info(fd);
+	if (!texture_split)
+	{
+		printf("Invalit initialisation map.\n");
+		return (1);
+	}
+	map_init(map_data, fd);
 	init_mouseAction(mouse);
 
-	map_data->time = 0;
-	map_data->oldTime = 0;
+	/* map_data->time = 0; */
+	/* map_data->oldTime = 0; */
 	
 	
 	init_mlxData(mlx_data, map_data);
 
-	if (init_texture(texture, mlx_data))
+	if (init_texture(texture, mlx_data, texture_split))
 	{
 		printf("Error while struct initialisation.Stop.\n");
 		exit(12);
@@ -497,18 +581,13 @@ void	rotate(data_t *data, double angle)
 	data->planeY = buff2 * sin(angle) + data->planeY * cos(angle);
 }
 
-mouseAction_t *mouse_st(void)
-{
-	static mouseAction_t	mouse;
 
-	return (&mouse);
-}
 
 int	action_hook(data_t *data)
 {
 	mouseAction_t	*mouse;
 
-	mouse = mouse_st();
+	mouse = mouse_global();
 	if (mouse->mov_forward == 1)
 	{
 		if (data->map[(int)(data->posX + data->dirX * mouse->moveSpeed)][(int)data->posY] == 0)
@@ -537,7 +616,7 @@ int	key_hook_release(int key, data_t *data)
 {
 	mouseAction_t	*mouse;
 
-	mouse = mouse_st();
+	mouse = mouse_global();
 	if (key == 13)
 		mouse->mov_forward = 0;
 	if (key == 1)
@@ -555,7 +634,7 @@ int mouse_action(int x, int y, data_t *data)
 	double			dy;
 	mouseAction_t	*mouse;
 
-	mouse = mouse_st();
+	mouse = mouse_global();
 
 	dx = (x - mouse->mouse_x) * 0.05;
 	dy = y - mouse->mouse_y;
@@ -570,17 +649,17 @@ int mouse_action(int x, int y, data_t *data)
 
 
 
-int main(/*data_t data */)
+int main(int argc, char **argv)
 {
 	data_t 			data;
 	texture_t		*texture;
 	mouseAction_t	*mouse;
 	mlxData_t		*mlxData;
 
-	mouse = mouse_st();
+	mouse = mouse_global();
 	texture = texture_global();
 	mlxData = mlxData_global();
-	if (cub3d_init(&data, mouse, mlxData, texture))
+	if (cub3d_init(&data, argv))
 	{
 		printf("Malloc error in cub3d_init(). Stop...\n");
 		exit(12);
