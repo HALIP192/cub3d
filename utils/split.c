@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/30 17:59:54 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/30 19:45:36 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/01 21:21:07 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,17 @@ void	*ft_free_4split(char **split, size_t id)
 	return (NULL);
 }
 
+int		start_split(char *s, char c, size_t *count, char ***result)
+{
+	if (!s)
+		return (1);
+	*count = words_alloc(s, c);
+	(*result) = (char **)malloc(sizeof(char *) * (*count + 1));
+	if (!(*result))
+		return (1);
+	return (0);
+}
+
 char	**ft_split(char *s, char c)
 {
 	size_t	count;
@@ -44,11 +55,7 @@ char	**ft_split(char *s, char c)
 	char	**result;
 	char	*iter;
 
-	if (!s)
-		return (NULL);
-	count = words_alloc(s, c);
-	result = (char **)malloc(sizeof(char *) * (count + 1));
-	if (!result)
+	if (start_split(s, c, &count, &result))
 		return (NULL);
 	result[count] = NULL;
 	i = 0;
@@ -57,6 +64,10 @@ char	**ft_split(char *s, char c)
 		while (*s == c && *s && s != NULL)
 			s++;
 		iter = ft_strchr(s, c);
+		if (iter == 0)
+			iter = ft_strchr(s, '\n');
+		if (iter == 0)
+			iter = ft_strchr(s, '\0');
 		result[i] = ft_substr(s, 0, (size_t)iter - (size_t)s);
 		if (!result[i++])
 			return ((char **)ft_free_4split(result, i));
@@ -64,3 +75,5 @@ char	**ft_split(char *s, char c)
 	}
 	return (result);
 }
+
+

@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/30 20:54:51 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/01 21:54:10 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,24 +167,110 @@ int	ft_close_window(data_t *data)
 	return (0);
 }
 
+int	init_floor_ceil_colors(texture_t *texture, char ***texture_split, int i)
+{
+	int		j;
+	char	**buff1;
+
+	if (!texture_split[i][1])
+	{
+		printf("Error in intialize file. Param number = %d\n", i);
+		return (1);
+	}
+	buff1 = ft_split(texture_split[i][1], ',');
+	j = 0;
+	while (buff1[j])
+	{
+		if (texture_split[i][0][0] == 'F')
+			texture->floor = ft_atoi(buff1[j]) << (8 * (int)ft_abs((i - 2)));
+		if (texture_split[i][0][0] == 'C')
+			texture->floor = ft_atoi(buff1[j]) << (8 * (int)ft_abs((i - 2)));
+		j++;
+		if (j > 3)
+		{
+			printf("Error Floor and Ceil colors must have only 3 haracteristic.\n");
+			return (1);
+		}
+	}
+	return (0);
+}
+
 int	png_to_img(texture_t *data, mlxData_t *mlxData, char ***texture_split, int i)
 {
 	if (texture_split[i][0][0] == 'N' && texture_split[i][0][1] == 'O')
-		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
-	else if (texture_split[i][0][0] == 'S' && texture_split[i][0][1] == 'O')
-		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
-	else if (texture_split[i][0][0] == 'W' && texture_split[i][0][1] == 'E')
-		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
-	else if (texture_split[i][0][0] == 'E' && texture_split[i][0][1] == 'A')
-		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
-	else if (texture_split[i][0][0] == 'F')
-		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+	{
+		data->img_ptr[0] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+		if (!data->img_ptr[0])
+			return (1);
+	} else if (texture_split[i][0][0] == 'S' && texture_split[i][0][1] == 'O')
+	{
+		data->img_ptr[1] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+		if (!data->img_ptr[1])
+			return (1);
+	} else if (texture_split[i][0][0] == 'W' && texture_split[i][0][1] == 'E')
+	{
+		data->img_ptr[2] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+		if (!data->img_ptr[2])
+			return (1);
+	} else if (texture_split[i][0][0] == 'E' && texture_split[i][0][1] == 'A')
+	{
+		data->img_ptr[3] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+		if (!data->img_ptr[3])
+			return (1);
+	} else if (texture_split[i][0][0] == 'F')
+		return (init_floor_ceil_colors(data, texture_split, i));
 	else if (texture_split[i][0][0] == 'C')
-		data->img_ptr[i] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
+		return (init_floor_ceil_colors(data, texture_split, i));
 	else
 	{
 		printf("Invalid init file \n");
 		return (1);
+	}
+	return (0);
+}
+
+void	free_texture_helper(char ***texture_split)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < 6)
+	{
+		j = 0;
+		while (texture_split[i][j])
+		{
+			free(texture_split[i][j]);
+			j++;
+		}
+		free(texture_split[i]);
+		i++;
+	}
+	free(texture_split);
+}
+
+int	get_textures_imgs(texture_t *data, char ***texture_split, int i)
+{
+	if (texture_split[i][0][0] == 'N' && texture_split[i][0][1] == 'O')
+	{
+		data->imgs[0] =	(int *)mlx_get_data_addr(data->img_ptr[0], &data->bpp[0], &data->sl[0], &data->end[0]);
+		if (!data->imgs[0])
+			return (1);
+	} else if (texture_split[i][0][0] == 'S' && texture_split[i][0][1] == 'O')
+	{
+		data->imgs[1] =	(int *)mlx_get_data_addr(data->img_ptr[1], &data->bpp[1], &data->sl[1], &data->end[1]);
+		if (!data->imgs[1])
+			return (1);
+	} else if (texture_split[i][0][0] == 'W' && texture_split[i][0][1] == 'E')
+	{
+		data->imgs[2] =	(int *)mlx_get_data_addr(data->img_ptr[2], &data->bpp[2], &data->sl[2], &data->end[2]);
+		if (!data->imgs[2])
+			return (1);
+	} else if (texture_split[i][0][0] == 'E' && texture_split[i][0][1] == 'A')
+	{
+		data->imgs[3] =	(int *)mlx_get_data_addr(data->img_ptr[3], &data->bpp[3], &data->sl[3], &data->end[3]);
+		if (!data->imgs[3])
+			return (1);
 	}
 	return (0);
 }
@@ -202,23 +288,18 @@ int	init_texture(texture_t *data, mlxData_t *mlxData, char ***texture_split)
 	data->end = (int *)malloc(sizeof(int) * 4);
 	data->sl = (int *)malloc(sizeof(int) * 4); 
 	
-	while (texture_split[i])
+	while (i < 6)
 	{
 		if (png_to_img(data, mlxData, texture_split, i))
 			return (1);
-		if (!data->img_ptr[i])
-		{
-			printf("Error in init texture from file. step = %d. Stop", i);
-			return (1);
-		}
-		data->imgs[i] = (int *)mlx_get_data_addr(data->img_ptr[i], &data->bpp[i], &data->sl[i], &data->end[i]);
-		if (!data->imgs[i])
+		if (get_textures_imgs(data, texture_split, i))
 		{
 			printf("Error in texture mlx_get_data_addr() step = %d. Stop.\n", i);
 			return (1);
 		}
 		i++;
 	}
+	free_texture_helper(texture_split);
 	return (0);
 }
 
@@ -246,32 +327,100 @@ void	init_mlxData(mlxData_t *data, data_t *map_data)
 
 }
 
-void	init_position(data_t *data)
+int	init_position(data_t *data, char *src, int j, int i)
 {
-	data->posX = 22.0;
-	data->posY = 12.0;
-	data->dirX = -1.0;
-	data->dirY = 0.0;
+	if (src[i] == 'N')
+	{
+		data->dirX = -1.0;
+		data->dirY = 0.0;
+	} else if (src[i] == 'W')
+	{
+		data->dirX = 0.0;
+		data->dirY = 1.0;
+	} else if (src[i] == 'E')
+	{
+		data->dirX = 0.0;
+		data->dirY = -1.0;
+	} else if (src[i] == 'S')
+	{
+		data->dirX = 1.0;
+		data->dirY = 0.0;
+	} else
+		return (1);
+	data->posX = (double)i;
+	data->posY = (double)j;
 	data->planeX = 0.0;
 	data->planeY = 0.66;
+	return (0);
 }
 
-void	init_screen_and_map(data_t *data)
+list_t	*init_screen_and_map(data_t *data, int fd)
 {
-	data->mapWidth = 24;
-	data->mapHeight = 24;
+	list_t *list_head;
+	list_t *list_cur;
+	int width;
+	int height;
+	int height_max;
+	
+	width = 0;
+	height_max = 0;
+	list_head = ft_lstnew(get_next_line(fd));
+	list_cur = list_head;
+	while (((char *)list_cur->content)[0] == '\n')
+	{
+		free(list_cur->content);
+		list_cur->content = get_next_line(fd);
+		if (!list_cur->content)
+		{
+			printf("Map error.\n");
+			return NULL;
+		}
+	}
+	while (list_cur->content)
+	{
+		height = ft_strlen(list_cur->content) - 1;
+		if (height > height_max)
+			height_max = height;
+		width++;
+		list_cur->next = ft_lstnew(get_next_line(fd));
+		list_cur = list_cur->next;
+	}
+	free(list_cur);
+	data->mapWidth = width;
+	data->mapHeight = height_max;
 	data->screenHeight = 720;//1440;
 	data->screenWidth = 1080;//2560;
+	return (list_head);
+}
 
+int lstcpy(data_t *data, char *src, int j)
+{
+	int	i;
+
+	i = 0;
+	while (src[i] && src[i] != '\n')
+	{
+		if (ft_isdigit(src[i]))
+			data->map[j][i] = src[i] - '0';
+		else if (src[i] != ' ')
+		{
+			if (init_position(data, src, j, i))
+				return (1);
+		}else
+			data->map[j][i] = -1;
+		i++;
+	}
+	return (0);
 
 }
 
 int	map_init(data_t *data, int fd)
 {
-	int	i;
+	int		i;
+	list_t	*map;
 
 	i = 0;
-	init_screen_and_map(data);
+	map = init_screen_and_map(data, fd);
 	data->map = (int **)malloc(sizeof(int *) * data->mapWidth);
 	if (!data->map)
 		return (1);
@@ -280,7 +429,8 @@ int	map_init(data_t *data, int fd)
 		data->map[i] = (int *)malloc(sizeof(int) * data->mapHeight);
 		if (!data->map[i])
 			return (1);
-		memcpy(data->map[i], map[i], data->mapHeight * 4);
+		if (lstcpy(data, map->content, i))
+			return (1);
 		int y = 0;
 		while (y < data->mapHeight)
 		{
@@ -289,8 +439,8 @@ int	map_init(data_t *data, int fd)
 		}
 		printf("\n");
 		i++;
+		map = map->next;
 	}
-	init_position(data);
 	return (0);
 }
 
@@ -319,19 +469,28 @@ char ***get_texture_info(int fd)
 	int		cnt;
 
 	mas = (char ***)malloc(sizeof(char **) * 7);
+	if (!mas)
+	{
+		printf("LOL\n");
+	}
 	mas[6] = NULL;
 	line = get_next_line(fd);
 	cnt = 0;
-	while (cnt != 5)
+	while (cnt < 6 && line)
 	{
 		if (line[0] == '\n')
+		{
+			line = get_next_line(fd);
 			continue;
+		}
 		if (is_line_valid(line))
+		{
+			mas[cnt] = ft_split(line, ' ');
+			printf("%s", mas[cnt][1]);
 			cnt++;
-		else
-			return NULL;
-		mas[0] = ft_split(line, ' ');
-		if (cnt != 5)
+		} else
+			return (NULL);
+		if (cnt < 6)
 			line = get_next_line(fd);
 	}
 	return (mas);
@@ -639,7 +798,7 @@ int mouse_action(int x, int y, data_t *data)
 	dx = (x - mouse->mouse_x) * 0.05;
 	dy = y - mouse->mouse_y;
 	
-	rotate(data, mouse->rotSpeed * dx);
+	rotate(data, mouse->rotSpeed * (-dx));
 
 	mouse->mouse_x = x;
 	mouse->mouse_y = y;

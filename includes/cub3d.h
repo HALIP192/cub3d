@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/09/30 19:45:11 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/01 21:50:59 by ntitan           ###   ########.fr       */
 /*   Updated: 2022/09/24 21:24:16 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -15,12 +15,8 @@
 # define CUB3D_H
 
 #include <stdio.h>
-#include "../utils/get_next_line.c"
 #include "../utils/get_next_line.h"
-#include "../utils/get_next_line_utils.c"
-#include "../utils/split.c"
 #include <stdlib.h>
-#include <string.h>
 #include <fcntl.h>
 #include "../minilibx_opengl_20191021/mlx.h"
 
@@ -75,6 +71,8 @@ typedef struct data_s
 
 typedef struct texture_s
 {
+	int		floor;
+	int		ceil;
 	void	**img_ptr;
 	int		**imgs;
 	int		*height;
@@ -82,7 +80,6 @@ typedef struct texture_s
 	int		*bpp;
 	int		*end;
 	int		*sl;
-
 } texture_t;
 
 typedef struct mouseAction_s
@@ -107,6 +104,17 @@ typedef struct mlxData_s
 	int		*image;
 } mlxData_t;
 
+typedef struct list_s
+{
+	struct list_s	*next;
+	void			*content;
+} list_t;
 
+int		ft_atoi(const char *str);
+list_t	*ft_lstnew(void	*content);
+void	ft_lstclear(list_t **lst, void (*del)(void *));
+int		is_digit(int c);
+char	**ft_split(char *str, char sep);
+int		ft_isdigit(int c);
 #endif
 
