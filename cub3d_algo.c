@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/01 21:54:10 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/02 13:57:41 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,9 +182,9 @@ int	init_floor_ceil_colors(texture_t *texture, char ***texture_split, int i)
 	while (buff1[j])
 	{
 		if (texture_split[i][0][0] == 'F')
-			texture->floor = ft_atoi(buff1[j]) << (8 * (int)ft_abs((i - 2)));
+			texture->floor |= ft_atoi(buff1[j]) << (8 * (int)ft_abs((j - 2)));
 		if (texture_split[i][0][0] == 'C')
-			texture->floor = ft_atoi(buff1[j]) << (8 * (int)ft_abs((i - 2)));
+			texture->ceil |= ft_atoi(buff1[j]) << (8 * (int)ft_abs((j - 2)));
 		j++;
 		if (j > 3)
 		{
@@ -647,9 +647,9 @@ void	raycasting(data_t *data, texture_t *texture, mlxData_t *mlxData, int texNum
 		while (data->y < data->screenHeight)
 		{
 			if (data->y < (data->screenHeight) && data->y < data->drawStart)
-				mlxData->image[data->y * (data->line_lenght / 4) + data->x] = SKY;
+				mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->ceil;//SKY;
 			if (data->y < data->screenHeight && data->y > data->drawEnd)
-				mlxData->image[data->y * (data->line_lenght / 4) + data->x] = BITUMEN;
+				mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->floor;
 			if (data->y >= data->drawStart && data->y <= data->drawEnd)
 			{
 				texY = (int)texPos & (texture->height[texNum] - 1);
