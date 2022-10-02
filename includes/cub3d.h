@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/01 21:50:59 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/02 20:47:02 by ntitan           ###   ########.fr       */
 /*   Updated: 2022/09/24 21:24:16 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -62,9 +62,11 @@ typedef struct data_s
 	int		side;
 	int		drawStart;
 	int		drawEnd;
+	int		corner;
 
 	int		x;
 	int		y;
+	
 
 
 } data_t;
@@ -116,5 +118,7 @@ void	ft_lstclear(list_t **lst, void (*del)(void *));
 int		is_digit(int c);
 char	**ft_split(char *str, char sep);
 int		ft_isdigit(int c);
+char	***free_mas(char ***mas);
+int		free_map(int **mas, int width);
 #endif
 

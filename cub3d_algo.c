@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/02 13:57:41 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/02 21:00:08 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -347,6 +347,9 @@ int	init_position(data_t *data, char *src, int j, int i)
 		data->dirY = 0.0;
 	} else
 		return (1);
+	if (i >= data->mapWidth || i <= 0 ||
+		j >= data->mapHeight || j <= 0)
+		return (1);
 	data->posX = (double)i;
 	data->posY = (double)j;
 	data->planeX = 0.0;
@@ -410,8 +413,76 @@ int lstcpy(data_t *data, char *src, int j)
 			data->map[j][i] = -1;
 		i++;
 	}
+	while (i < data->mapHeight)
+	{
+		data->map[j][i] = -1;
+		i++;
+	}
 	return (0);
 
+}
+
+int	init_rec_check_mas(data_t *data, int **map, int i, int j)
+{
+	if (map[i][j] == -1 || i == data->mapWidth - 1 ||
+		i == 0 || j == data->mapHeight - 1 || j == 0)
+		return (0);
+	map[i][j] = -2;
+	if (map[i + 1][j] == 0)
+		return (init_rec_check_mas(data, map, i + 1, j));
+	if (map[i][j + 1] == 0)
+		return (init_rec_check_mas(data, map, i, j + 1));
+	if (map[i - 1][j] == 0)
+		return (init_rec_check_mas(data, map, i - 1, j));
+	if (map[i][j - 1] == 0)
+		return (init_rec_check_mas(data, map, i, j - 1));
+	return (1);
+}
+
+int	recursiv_check_map(data_t *data, int i_check, int j_check)
+{
+	int **mas_cp;
+	int	i;
+	int j;
+
+	i = 0;
+	mas_cp = (int **)malloc(sizeof(int *) * data->mapWidth);
+	if (!mas_cp)
+		return (1);
+	while (i < data->mapWidth)
+	{
+		j = 0;
+		mas_cp[i] = (int *)malloc(sizeof(int) * data->mapHeight);
+		while (j < data->mapHeight)
+		{
+			mas_cp[i][j] = data->map[i][j];
+			j++;
+		}
+		i++;
+	}
+	if (init_rec_check_mas(data, mas_cp, i_check, j_check))
+		return (1);
+	return (0);
+}
+
+int	validate_map(data_t *data)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < data->mapWidth)
+	{
+		j = 0;
+		while (j < data->mapHeight)
+		{
+			if (data->map[i][j] == 0 )
+				return (recursiv_check_map(data, i, j));
+			j++;
+		}
+		i++;
+	}
+	return (0);
 }
 
 int	map_init(data_t *data, int fd)
@@ -434,13 +505,18 @@ int	map_init(data_t *data, int fd)
 		int y = 0;
 		while (y < data->mapHeight)
 		{
-			printf("%d ", data->map[i][y]);
+			if (data->map[i][y] == -1)
+				printf("0 ");
+			else
+				printf("%d ", data->map[i][y]);
 			y++;
 		}
 		printf("\n");
 		i++;
 		map = map->next;
 	}
+	if (validate_map(data))
+		return (1);
 	return (0);
 }
 
@@ -453,7 +529,7 @@ mouseAction_t *mouse_global(void)
 
 int	is_line_valid(char *line)
 {
-	if ((line[0] == 'N' && line[1] == 'O') ||
+	if (line && (line[0] == 'N' && line[1] == 'O') ||
 		(line[0] == 'S' && line[1] == 'O') ||
 		(line[0] == 'W' && line[1] == 'E') ||
 		(line[0] == 'E' && line[1] == 'A') ||
@@ -486,7 +562,6 @@ char ***get_texture_info(int fd)
 		if (is_line_valid(line))
 		{
 			mas[cnt] = ft_split(line, ' ');
-			printf("%s", mas[cnt][1]);
 			cnt++;
 		} else
 			return (NULL);
@@ -513,14 +588,21 @@ int	cub3d_init(data_t *map_data, char **argv)
 	{
 		printf("Cann't open file.\n");
 		return (1);
+		exit(1);
 	}
 	texture_split = get_texture_info(fd);
 	if (!texture_split)
 	{
-		printf("Invalit initialisation map.\n");
-		return (1);
+		printf("Invalid initialisation map.\n");
+		close(fd);
+		exit(1);
 	}
-	map_init(map_data, fd);
+	if (!map_init(map_data, fd))
+	{
+		printf("Invalid map.\n");
+		close(fd);
+		exit(1);
+	}
 	init_mouseAction(mouse);
 
 	/* map_data->time = 0; */
@@ -532,7 +614,7 @@ int	cub3d_init(data_t *map_data, char **argv)
 	if (init_texture(texture, mlx_data, texture_split))
 	{
 		printf("Error while struct initialisation.Stop.\n");
-		exit(12);
+		exit(1);
 	}
 	return (0);
 }
@@ -585,12 +667,20 @@ void	Dda(data_t *data)
 			data->sideDistX += data->deltaDistX;
 			data->mapX += data->stepX;
 			data->side = 0;
+			if (data->posX >= data->mapX)
+				data->corner = 1;
+			else
+				data->corner = 0;
 		}
 		else
 		{
 			data->sideDistY += data->deltaDistY;
 			data->mapY += data->stepY;
 			data->side = 1;
+			if (data->posY >= data->mapY)
+				data->corner = 2;
+			else
+				data->corner = 3;
 		}
 		if (data->map[data->mapX][data->mapY] > 0) 
 			hit = 1;
@@ -619,7 +709,7 @@ int	get_texX(data_t *data, texture_t *texture)
 	double	wallX;
 	int		texX;
 
-	texNum = data->map[data->mapX][data->mapY] - 1;
+	texNum = data->corner;
 	if (data->side == 0)
 		wallX = data->posY + data->WallDist * data->rayDirY;
 	else
@@ -656,7 +746,8 @@ void	raycasting(data_t *data, texture_t *texture, mlxData_t *mlxData, int texNum
 				texPos += step;
 				if (data->side == 1)
 					mlxData->image[data->y * (data->line_lenght / 4) + data->x] = (texture->imgs[texNum][texture->height[texNum] * texY + texX] >> 1);
-				mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->imgs[texNum][texture->height[texNum] * texY + texX];
+				else
+					mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->imgs[texNum][texture->height[texNum] * texY + texX];
 			}
 			data->y++;
 		}
@@ -678,7 +769,7 @@ void	cub3d(data_t *data)
 		init_steps_and_sideDist(data);
 		Dda(data);
 		set_draw_starts(data);
-		texNum = data->map[data->mapX][data->mapY] - 1;
+		texNum = data->corner;
 		raycasting(data, texture, mlxData, texNum);
 		data->x++;
 	
@@ -715,8 +806,8 @@ void	print_map(data_t *data)
 				printf(RED "%d " RESET, data->map[x][y]);
 			else if (data->map[x][y] == 1)
 				printf(BLUE "1 " RESET);
-			else
-				printf("%d ",data->map[x][y]);
+			else if (data->map[x][y] == -1 || data->map[x][y] == 0)
+				printf("0 ");
 			y++;
 		}
 		printf("\n");
@@ -806,7 +897,13 @@ int mouse_action(int x, int y, data_t *data)
 	return (0);
 }
 
-
+int	print_helper(void)
+{
+	printf( RED "Invalid arguments\n" RESET);
+	printf( YELLOW "Usadge:\n" RESET);
+	printf( YELLOW "./cub3d [path_to_file]\n" RESET);
+	return (0);
+}
 
 int main(int argc, char **argv)
 {
@@ -814,7 +911,9 @@ int main(int argc, char **argv)
 	texture_t		*texture;
 	mouseAction_t	*mouse;
 	mlxData_t		*mlxData;
-
+	
+	if (argc < 2)
+		return (print_helper());
 	mouse = mouse_global();
 	texture = texture_global();
 	mlxData = mlxData_global();
