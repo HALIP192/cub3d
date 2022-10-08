@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/02 21:00:08 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/08 19:38:06 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -354,6 +354,7 @@ int	init_position(data_t *data, char *src, int j, int i)
 	data->posY = (double)j;
 	data->planeX = 0.0;
 	data->planeY = 0.66;
+	data->map[j][i]  = 0;
 	return (0);
 }
 
@@ -405,12 +406,13 @@ int lstcpy(data_t *data, char *src, int j)
 	{
 		if (ft_isdigit(src[i]))
 			data->map[j][i] = src[i] - '0';
-		else if (src[i] != ' ')
+		else if (src[i] == 'N' || src[i] == 'S' ||
+				  src[i] == 'W' || src[i] == 'E')
 		{
 			if (init_position(data, src, j, i))
 				return (1);
-		}else
-			data->map[j][i] = -1;
+		} else
+			return (1);
 		i++;
 	}
 	while (i < data->mapHeight)
@@ -426,7 +428,7 @@ int	init_rec_check_mas(data_t *data, int **map, int i, int j)
 {
 	if (map[i][j] == -1 || i == data->mapWidth - 1 ||
 		i == 0 || j == data->mapHeight - 1 || j == 0)
-		return (0);
+		return (1);
 	map[i][j] = -2;
 	if (map[i + 1][j] == 0)
 		return (init_rec_check_mas(data, map, i + 1, j));
@@ -436,7 +438,7 @@ int	init_rec_check_mas(data_t *data, int **map, int i, int j)
 		return (init_rec_check_mas(data, map, i - 1, j));
 	if (map[i][j - 1] == 0)
 		return (init_rec_check_mas(data, map, i, j - 1));
-	return (1);
+	return (0);
 }
 
 int	recursiv_check_map(data_t *data, int i_check, int j_check)
@@ -460,9 +462,14 @@ int	recursiv_check_map(data_t *data, int i_check, int j_check)
 		}
 		i++;
 	}
+	j = 0;
 	if (init_rec_check_mas(data, mas_cp, i_check, j_check))
-		return (1);
-	return (0);
+		j = 1;
+	i = 0;
+	while (i < data->mapWidth)
+		free(mas_cp[i++]);
+	free(mas_cp);
+	return (j);
 }
 
 int	validate_map(data_t *data)
@@ -482,7 +489,7 @@ int	validate_map(data_t *data)
 		}
 		i++;
 	}
-	return (0);
+	return (1);
 }
 
 int	map_init(data_t *data, int fd)
@@ -905,6 +912,45 @@ int	print_helper(void)
 	return (0);
 }
 
+int	ft_memcmp(const void *s1, const void *s2, size_t n)
+{
+	size_t			i;
+	unsigned char	*str1;
+	unsigned char	*str2;
+
+	str1 = (unsigned char *)s1;
+	str2 = (unsigned char *)s2;
+	i = 0;
+	while (i < n)
+	{
+		if (str1[i] != str2[i])
+			return (str1[i] - str2[i]);
+		i++;
+	}
+	return (0);
+}
+
+int	check_argv(char **argv)
+{
+	int		fd;
+	char	**str;
+	int		i;
+
+	str = ft_split(argv[1], '.');
+	i = 0;
+	while (str[i])
+		i++;
+	if (i != 2)
+			exit(printf( RED "Invalid file name\n" RESET));
+	if (ft_memcmp(str[1], "cub", ft_strlen(str[1])))
+			exit(printf( RED "Invalid file name\n" RESET));
+	fd = open(argv[1], O_RDONLY);
+	if (!fd)
+		exit(printf( RED "Can't open file\n" RESET));
+	close(fd);
+	return (0);
+}
+
 int main(int argc, char **argv)
 {
 	data_t 			data;
@@ -914,6 +960,7 @@ int main(int argc, char **argv)
 	
 	if (argc < 2)
 		return (print_helper());
+	check_argv(argv);
 	mouse = mouse_global();
 	texture = texture_global();
 	mlxData = mlxData_global();
