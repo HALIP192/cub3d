@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/08 20:45:17 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/08 21:16:36 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -869,7 +869,9 @@ int	action_hook(data_t *data)
 	if (mouse->mov_left == 1)
 	{
 		if (data->map[(int)(data->posX - data->dirX * mouse->moveSpeed)][(int)data->posY] == 0)
-			data
+			data->posX -= data->dirX * mouse->moveSpeed;
+		if (data->map[(int)data->posX][(int)(data->posY + data->dirY * mouse->moveSpeed)] == 0)
+			data->posY += data->
 	}
 	if (mouse->rot_right == 1)
 		rotate(data, -(mouse->rotSpeed));
