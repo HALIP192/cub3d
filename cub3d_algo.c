@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/08 19:38:06 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/08 20:45:17 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,7 +411,9 @@ int lstcpy(data_t *data, char *src, int j)
 		{
 			if (init_position(data, src, j, i))
 				return (1);
-		} else
+		} else if (src[i] == ' ')
+			data->map[j][i] = -1;
+		else
 			return (1);
 		i++;
 	}
@@ -594,7 +596,6 @@ int	cub3d_init(data_t *map_data, char **argv)
 	if (!fd)
 	{
 		printf("Cann't open file.\n");
-		return (1);
 		exit(1);
 	}
 	texture_split = get_texture_info(fd);
@@ -604,7 +605,7 @@ int	cub3d_init(data_t *map_data, char **argv)
 		close(fd);
 		exit(1);
 	}
-	if (!map_init(map_data, fd))
+	if (map_init(map_data, fd))
 	{
 		printf("Invalid map.\n");
 		close(fd);
@@ -791,8 +792,12 @@ int	key_hook(int key, mouseAction_t *data)
 		if (key == 1)
 			data->mov_back = 1;
 		if (key == 0)
-			data->rot_left = 1;
+			data->mov_left = 1;
 		if (key == 2)
+			data->mov_right = 1;
+		if (key == 123)
+			data->rot_left = 1;
+		if (key == 124)
 			data->rot_right = 1;
 	return (0);
 }
@@ -861,6 +866,11 @@ int	action_hook(data_t *data)
 			data->posY -= data->dirY * mouse->moveSpeed;
 		print_map(data);
 	}
+	if (mouse->mov_left == 1)
+	{
+		if (data->map[(int)(data->posX - data->dirX * mouse->moveSpeed)][(int)data->posY] == 0)
+			data
+	}
 	if (mouse->rot_right == 1)
 		rotate(data, -(mouse->rotSpeed));
 	if (mouse->rot_left == 1)
@@ -879,9 +889,14 @@ int	key_hook_release(int key, data_t *data)
 	if (key == 1)
 		mouse->mov_back = 0;
 	if (key == 0)
-		mouse->rot_left = 0;
+		mouse->mov_left = 0;
 	if (key == 2)
+		mouse->mov_right = 0;
+	if (key == 123)
+		mouse->rot_left = 0;
+	if (key == 124)
 		mouse->rot_right = 0;
+
 	return (0);
 }
 
@@ -944,10 +959,6 @@ int	check_argv(char **argv)
 			exit(printf( RED "Invalid file name\n" RESET));
 	if (ft_memcmp(str[1], "cub", ft_strlen(str[1])))
 			exit(printf( RED "Invalid file name\n" RESET));
-	fd = open(argv[1], O_RDONLY);
-	if (!fd)
-		exit(printf( RED "Can't open file\n" RESET));
-	close(fd);
 	return (0);
 }
 
