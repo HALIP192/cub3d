@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/02 20:47:02 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/09 16:46:17 by ntitan           ###   ########.fr       */
 /*   Updated: 2022/09/24 21:24:16 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -90,6 +90,8 @@ typedef struct mouseAction_s
 	float	rotSpeed;
 	int		mov_forward;
 	int		mov_back;
+	int		mov_left;
+	int		mov_right;
 	int		rot_right;
 	int		rot_left;
 	int		mouse_x;
@@ -120,5 +122,7 @@ char	**ft_split(char *str, char sep);
 int		ft_isdigit(int c);
 char	***free_mas(char ***mas);
 int		free_map(int **mas, int width);
+int		ft_memcmp(const void *s1, const void *s2, size_t n);
+int		ft_max(int a, int b);
 #endif
 

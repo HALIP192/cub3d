@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/08 21:16:36 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/09 16:59:08 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 #define KEY_DOWN 125
 #define KEY_UP 126
 
+#define eps (1/10000)
 
 /* int map[mapWidth][mapHeight] = */ 
 /* { */
@@ -111,7 +112,7 @@ double ft_abs(double num)
 texture_t	*texture_global(void)
 {
 	static texture_t	texture = {};
-
+	
 	return (&texture);
 }
 
@@ -172,7 +173,8 @@ int	init_floor_ceil_colors(texture_t *texture, char ***texture_split, int i)
 	int		j;
 	char	**buff1;
 
-	if (!texture_split[i][1])
+	if (!texture_split[i][1] || (texture_split[i][0][0] == 'F' && data->floor != -1) ||
+		(texture_split[i][0][0] == 'C' && data->ceil != -1))
 	{
 		printf("Error in intialize file. Param number = %d\n", i);
 		return (1);
@@ -217,15 +219,10 @@ int	png_to_img(texture_t *data, mlxData_t *mlxData, char ***texture_split, int i
 		data->img_ptr[3] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
 		if (!data->img_ptr[3])
 			return (1);
-	} else if (texture_split[i][0][0] == 'F')
-		return (init_floor_ceil_colors(data, texture_split, i));
-	else if (texture_split[i][0][0] == 'C')
+	} else if (texture_split[i][0][0] == 'F' || texture_split[i][0][0] == 'C')
 		return (init_floor_ceil_colors(data, texture_split, i));
 	else
-	{
-		printf("Invalid init file \n");
-		return (1);
-	}
+		return (printf("Invalid init file \n"));
 	return (0);
 }
 
@@ -249,8 +246,31 @@ void	free_texture_helper(char ***texture_split)
 	free(texture_split);
 }
 
+
+int	check_for_double(char ***texture_split)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (texture_split[i])
+	{
+		j = i + 1;
+		while (texture_split[j])
+		{
+			if (ft_memcmp(texture_split[i][0], texture_split[j][0], ft_max(ft_strlen(texture_split[i][0]), ft_strlen(texture_split[j][0]))) == 0)
+				return (1);
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
 int	get_textures_imgs(texture_t *data, char ***texture_split, int i)
 {
+	if (check_for_double(texture_split))
+		exit(printf( RED "Double keys are unacceptable.\n" RESET ));
 	if (texture_split[i][0][0] == 'N' && texture_split[i][0][1] == 'O')
 	{
 		data->imgs[0] =	(int *)mlx_get_data_addr(data->img_ptr[0], &data->bpp[0], &data->sl[0], &data->end[0]);
@@ -286,7 +306,9 @@ int	init_texture(texture_t *data, mlxData_t *mlxData, char ***texture_split)
 	data->height = (int *)malloc(sizeof(int) * 4);
 	data->bpp = (int *)malloc(sizeof(int) * 4);
 	data->end = (int *)malloc(sizeof(int) * 4);
-	data->sl = (int *)malloc(sizeof(int) * 4); 
+	data->sl = (int *)malloc(sizeof(int) * 4);
+	data->floor = -1;
+	data->ceil = -1;
 	
 	while (i < 6)
 	{
@@ -294,7 +316,7 @@ int	init_texture(texture_t *data, mlxData_t *mlxData, char ***texture_split)
 			return (1);
 		if (get_textures_imgs(data, texture_split, i))
 		{
-			printf("Error in texture mlx_get_data_addr() step = %d. Stop.\n", i);
+			printf("Error in init_texture step = %d. Stop.\n", i);
 			return (1);
 		}
 		i++;
@@ -307,6 +329,8 @@ void	init_mouseAction(mouseAction_t *data)
 {
 	data->mov_forward = 0;
 	data->mov_back = 0;
+	data->mov_left = 0;
+	data->mov_right = 0;
 	data->rot_left = 0;
 	data->rot_right = 0;
 	data->moveSpeed = 0.07;
@@ -690,7 +714,7 @@ void	Dda(data_t *data)
 			else
 				data->corner = 3;
 		}
-		if (data->map[data->mapX][data->mapY] > 0) 
+		if (data->map[(int)data->mapX][(int)data->mapY] > 0) 
 			hit = 1;
 	}
 		
@@ -825,7 +849,7 @@ void	print_map(data_t *data)
 		printf("\n");
 		x++;
 	}
-	printf("x = %d\ny = %d\n", (int)data->posX, (int)data->posY);
+	printf("x = %f\ny = %f\n", data->posX, data->posY);
 }
 
 
@@ -856,7 +880,6 @@ int	action_hook(data_t *data)
 			data->posX += data->dirX * mouse->moveSpeed;
 		if (data->map[(int)data->posX][(int)(data->posY + data->dirY * mouse->moveSpeed)] == 0)
 			data->posY += data->dirY * mouse->moveSpeed;
-		print_map(data);
 	}
 	if (mouse->mov_back == 1)
 	{
@@ -864,19 +887,27 @@ int	action_hook(data_t *data)
 			data->posX -= data->dirX * mouse->moveSpeed;
 		if (data->map[(int)data->posX][(int)(data->posY - data->dirY * mouse->moveSpeed)] == 0)
 			data->posY -= data->dirY * mouse->moveSpeed;
-		print_map(data);
+	}
+	if (mouse->mov_right == 1)
+	{
+		if (data->map[(int)data->posX][(int)(data->posY - data->dirX * mouse->moveSpeed)] == 0)
+			data->posY -= data->dirX * mouse->moveSpeed;
+		if (data->map[(int)(data->posX + data->dirY * mouse->moveSpeed)][(int)data->posY] == 0)
+			data->posX += data->dirY * mouse->moveSpeed;
 	}
 	if (mouse->mov_left == 1)
 	{
-		if (data->map[(int)(data->posX - data->dirX * mouse->moveSpeed)][(int)data->posY] == 0)
-			data->posX -= data->dirX * mouse->moveSpeed;
-		if (data->map[(int)data->posX][(int)(data->posY + data->dirY * mouse->moveSpeed)] == 0)
-			data->posY += data->
+		if (data->map[(int)(data->posX - data->dirY * mouse->moveSpeed - eps)][(int)data->posY] == 0)
+			data->posX -= data->dirY * mouse->moveSpeed; 
+		if (data->map[(int)data->posX][(int)(data->posY + data->dirX * mouse->moveSpeed - eps)] == 0)
+			data->posY += data->dirX * mouse->moveSpeed;
+
 	}
 	if (mouse->rot_right == 1)
 		rotate(data, -(mouse->rotSpeed));
 	if (mouse->rot_left == 1)
 		rotate(data, mouse->rotSpeed);
+	print_map(data);
 	cub3d(data);
 	return (0);
 }
@@ -926,24 +957,6 @@ int	print_helper(void)
 	printf( RED "Invalid arguments\n" RESET);
 	printf( YELLOW "Usadge:\n" RESET);
 	printf( YELLOW "./cub3d [path_to_file]\n" RESET);
-	return (0);
-}
-
-int	ft_memcmp(const void *s1, const void *s2, size_t n)
-{
-	size_t			i;
-	unsigned char	*str1;
-	unsigned char	*str2;
-
-	str1 = (unsigned char *)s1;
-	str2 = (unsigned char *)s2;
-	i = 0;
-	while (i < n)
-	{
-		if (str1[i] != str2[i])
-			return (str1[i] - str2[i]);
-		i++;
-	}
 	return (0);
 }
 
