@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/09 16:46:17 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/09 20:31:01 by ntitan           ###   ########.fr       */
 /*   Updated: 2022/09/24 21:24:16 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -15,13 +15,22 @@
 # define CUB3D_H
 
 #include <stdio.h>
-#include "../utils/get_next_line.h"
 #include <stdlib.h>
 #include <fcntl.h>
+#include "printf_colors.h"
+#include "../utils/get_next_line.h"
 #include "../minilibx_opengl_20191021/mlx.h"
 
 #define SKY 0x87CEED
 #define BITUMEN 0x34495E
+
+#define	KEY_W 13
+#define KEY_S 1
+#define KEY_A 0
+#define KEY_D 2
+#define KEY_LEFT 123
+#define KEY_RIGHT 124
+#define KEY_ESC 53
 /* #include "minilibx_opengl_20191021/mlx_opengl.h" */
 /* #include "minilibx_opengl_20191021/mlx_new_window.h" */
 /* #include "minilibx_opengl_20191021/mlx_int.h" */
@@ -114,15 +123,18 @@ typedef struct list_s
 	void			*content;
 } list_t;
 
-int		ft_atoi(const char *str);
-list_t	*ft_lstnew(void	*content);
-void	ft_lstclear(list_t **lst, void (*del)(void *));
-int		is_digit(int c);
-char	**ft_split(char *str, char sep);
-int		ft_isdigit(int c);
-char	***free_mas(char ***mas);
-int		free_map(int **mas, int width);
-int		ft_memcmp(const void *s1, const void *s2, size_t n);
-int		ft_max(int a, int b);
+texture_t		*texture_global(void);
+mlxData_t		*mlxData_global(void);
+mouseAction_t	*mouse_global(void);
+int				ft_atoi(const char *str);
+list_t			*ft_lstnew(void	*content);
+void			ft_lstclear(list_t **lst, void (*del)(void *));
+int				is_digit(int c);
+char			**ft_split(char *str, char sep);
+int				ft_isdigit(int c);
+char			***free_mas(char ***mas);
+int				free_map(int **mas, int width);
+int				ft_memcmp(const void *s1, const void *s2, size_t n);
+int				ft_max(int a, int b);
 #endif
 

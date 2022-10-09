@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/09 16:59:08 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/09 20:53:00 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,114 +14,27 @@
 #include "stdio.h"
 #include "math.h"
 #include <string.h>
-#include "printf_colors.h"
-/* #define mapWidth 24 */
-/* #define mapHeight 24 */
-/* #define screenHeight 640 */
-/* #define screenWidth 480 */
 
-/* #define RED 0x00ff0000 */
-/* #define GREEN 0x0000ff00 */
-/* #define BLUE 0x000000ff */
-/* #define YELLOW 0x00ffff00 */
-
-#define KEY_LEFT 123
-#define KEY_RIGHT 124
-#define KEY_DOWN 125
-#define KEY_UP 126
-
-#define eps (1/10000)
-
-/* int map[mapWidth][mapHeight] = */ 
-/* { */
-/*   {1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4}, */
-/*   {1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3} */
-/* }; */
-
-int map[24][24] = 
-{
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-};
 #define MOUSE_LEFT 1
 #define MOUSE_WHEEL 2
 #define MOUSE_RIGHT 3
 #define MOUSE_WHEEL_DOWN 4
 #define MOUSE_WHEEL_UP 5
 
-#define key_press 2
-#define key_release 3
-#define mouse_press 4
-#define mouse_release 5
-#define mouse_move 6
-#define mouse_enter_window 7
-#define mouse_leave_window 8
-#define focus_in 9
-#define focus_out 10
-#define window_close 17
+#define KEY_PRESS 2
+#define KEY_RELEASE 3
+#define MOUSE_PRESS 4
+#define MOUSE_RELEASE 5
+#define MOUSE_MOVE 6
+#define MOUSE_ENTER_WINDOW 7
+#define MOUSE_LEAVE_WINDOW 8
+#define WINDOW_CLOSE 17
 
 double ft_abs(double num)
 {
 	return num > 0 ? num : num * (-1);
 }
 
-texture_t	*texture_global(void)
-{
-	static texture_t	texture = {};
-	
-	return (&texture);
-}
-
-mlxData_t	*mlxData_global(void)
-{
-	static mlxData_t	mlxData;
-
-	return (&mlxData);
-}
 
 void	data_cleaner(data_t *data)
 {
@@ -173,8 +86,8 @@ int	init_floor_ceil_colors(texture_t *texture, char ***texture_split, int i)
 	int		j;
 	char	**buff1;
 
-	if (!texture_split[i][1] || (texture_split[i][0][0] == 'F' && data->floor != -1) ||
-		(texture_split[i][0][0] == 'C' && data->ceil != -1))
+	if (!texture_split[i][1] || (texture_split[i][0][0] == 'F' && texture->floor != 0) ||
+		(texture_split[i][0][0] == 'C' && texture->ceil != 0))
 	{
 		printf("Error in intialize file. Param number = %d\n", i);
 		return (1);
@@ -307,8 +220,6 @@ int	init_texture(texture_t *data, mlxData_t *mlxData, char ***texture_split)
 	data->bpp = (int *)malloc(sizeof(int) * 4);
 	data->end = (int *)malloc(sizeof(int) * 4);
 	data->sl = (int *)malloc(sizeof(int) * 4);
-	data->floor = -1;
-	data->ceil = -1;
 	
 	while (i < 6)
 	{
@@ -553,12 +464,7 @@ int	map_init(data_t *data, int fd)
 	return (0);
 }
 
-mouseAction_t *mouse_global(void)
-{
-	static mouseAction_t	mouse;
 
-	return (&mouse);
-}
 
 int	is_line_valid(char *line)
 {
@@ -809,20 +715,33 @@ void	cub3d(data_t *data)
 	mlx_put_image_to_window(mlxData->mlx_ptr, mlxData->mlx_win, mlxData->img_ptr, 0, 0);
 }
 
+int	esc_function(void)
+{
+	mlxData_t	*mlxData;
+
+	mlxData = mlxData_global();
+	mlx_destroy_image(mlxData->mlx_ptr, mlxData->img_ptr);
+	mlx_destroy_window(mlxData->mlx_ptr, mlxData->mlx_win);
+	exit(0);
+	return (0);
+}
+
 int	key_hook(int key, mouseAction_t *data)
 {
-		if (key == 13)
-			data->mov_forward = 1;
-		if (key == 1)
-			data->mov_back = 1;
-		if (key == 0)
-			data->mov_left = 1;
-		if (key == 2)
-			data->mov_right = 1;
-		if (key == 123)
-			data->rot_left = 1;
-		if (key == 124)
-			data->rot_right = 1;
+	if (key == KEY_W)
+		data->mov_forward = 1;
+	if (key == KEY_S)
+		data->mov_back = 1;
+	if (key == KEY_A)
+		data->mov_left = 1;
+	if (key == KEY_D)
+		data->mov_right = 1;
+	if (key == KEY_LEFT)
+		data->rot_left = 1;
+	if (key == KEY_RIGHT)
+		data->rot_right = 1;
+	if (key == KEY_ESC)
+		esc_function();
 	return (0);
 }
 
@@ -897,9 +816,9 @@ int	action_hook(data_t *data)
 	}
 	if (mouse->mov_left == 1)
 	{
-		if (data->map[(int)(data->posX - data->dirY * mouse->moveSpeed - eps)][(int)data->posY] == 0)
+		if (data->map[(int)(data->posX - data->dirY * mouse->moveSpeed)][(int)data->posY] == 0)
 			data->posX -= data->dirY * mouse->moveSpeed; 
-		if (data->map[(int)data->posX][(int)(data->posY + data->dirX * mouse->moveSpeed - eps)] == 0)
+		if (data->map[(int)data->posX][(int)(data->posY + data->dirX * mouse->moveSpeed)] == 0)
 			data->posY += data->dirX * mouse->moveSpeed;
 
 	}
@@ -1000,10 +919,10 @@ int main(int argc, char **argv)
 //	mlx_key_hook(data->mlx_win, key_act, data);
 
 
-	mlx_hook(mlxData->mlx_win, 2, 0, key_hook, mouse);
-	mlx_hook(mlxData->mlx_win, 3, 0, key_hook_release, mouse);
-	mlx_hook(mlxData->mlx_win, 17, 0, ft_close_window, &data);
-	mlx_hook(mlxData->mlx_win, mouse_move, 0, mouse_action, &data);
+	mlx_hook(mlxData->mlx_win, KEY_PRESS, 0, key_hook, mouse);
+	mlx_hook(mlxData->mlx_win, KEY_RELEASE, 0, key_hook_release, mouse);
+	mlx_hook(mlxData->mlx_win, WINDOW_CLOSE, 0, ft_close_window, &data);
+	mlx_hook(mlxData->mlx_win, MOUSE_MOVE, 0, mouse_action, &data);
 
 	mlx_loop_hook(mlxData->mlx_ptr, action_hook, &data);
 	mlx_loop(mlxData->mlx_ptr);
