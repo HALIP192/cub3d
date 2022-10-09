@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/09 20:31:01 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/09 20:58:12 by ntitan           ###   ########.fr       */
 /*   Updated: 2022/09/24 21:24:16 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -31,6 +31,22 @@
 #define KEY_LEFT 123
 #define KEY_RIGHT 124
 #define KEY_ESC 53
+
+#define MOUSE_LEFT 1
+#define MOUSE_WHEEL 2
+#define MOUSE_RIGHT 3
+#define MOUSE_WHEEL_DOWN 4
+#define MOUSE_WHEEL_UP 5
+
+#define KEY_PRESS 2
+#define KEY_RELEASE 3
+#define MOUSE_PRESS 4
+#define MOUSE_RELEASE 5
+#define MOUSE_MOVE 6
+#define MOUSE_ENTER_WINDOW 7
+#define MOUSE_LEAVE_WINDOW 8
+#define WINDOW_CLOSE 17
+
 /* #include "minilibx_opengl_20191021/mlx_opengl.h" */
 /* #include "minilibx_opengl_20191021/mlx_new_window.h" */
 /* #include "minilibx_opengl_20191021/mlx_int.h" */

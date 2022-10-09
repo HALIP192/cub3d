@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/09 20:53:00 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/09 21:27:15 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,70 +15,9 @@
 #include "math.h"
 #include <string.h>
 
-#define MOUSE_LEFT 1
-#define MOUSE_WHEEL 2
-#define MOUSE_RIGHT 3
-#define MOUSE_WHEEL_DOWN 4
-#define MOUSE_WHEEL_UP 5
-
-#define KEY_PRESS 2
-#define KEY_RELEASE 3
-#define MOUSE_PRESS 4
-#define MOUSE_RELEASE 5
-#define MOUSE_MOVE 6
-#define MOUSE_ENTER_WINDOW 7
-#define MOUSE_LEAVE_WINDOW 8
-#define WINDOW_CLOSE 17
-
 double ft_abs(double num)
 {
 	return num > 0 ? num : num * (-1);
-}
-
-
-void	data_cleaner(data_t *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->mapHeight)
-	{
-		free(data->map[i]);
-		i++;
-	}
-	free(data->map);
-}
-
-void	free_texture(texture_t *data, mlxData_t *mlxData)
-{
-	int	i;
-
-	i = 0;
-	while (i < 0)
-	{
-		mlx_destroy_image(mlxData->mlx_ptr, data->imgs[i]);
-		free(data->imgs[i]);
-		i++;
-	}
-	free(data->img_ptr);
-	free(data->imgs);
-	free(data->height);
-	free(data->width);
-	free(data->bpp);
-	free(data->end);
-	free(data->sl);
-}
-
-int	ft_close_window(data_t *data)
-{
-	mlxData_t	*mlxData;
-
-	mlxData = mlxData_global();
-	mlx_destroy_image(mlxData->mlx_ptr, mlxData->img_ptr);
-	mlx_destroy_window(mlxData->mlx_ptr, mlxData->mlx_win);
-	data_cleaner(data);
-	exit(0);
-	return (0);
 }
 
 int	init_floor_ceil_colors(texture_t *texture, char ***texture_split, int i)
@@ -871,60 +810,60 @@ int mouse_action(int x, int y, data_t *data)
 	return (0);
 }
 
-int	print_helper(void)
-{
-	printf( RED "Invalid arguments\n" RESET);
-	printf( YELLOW "Usadge:\n" RESET);
-	printf( YELLOW "./cub3d [path_to_file]\n" RESET);
-	return (0);
-}
+/* int	print_helper(void) */
+/* { */
+/* 	printf( RED "Invalid arguments\n" RESET); */
+/* 	printf( YELLOW "Usadge:\n" RESET); */
+/* 	printf( YELLOW "./cub3d [path_to_file]\n" RESET); */
+/* 	return (0); */
+/* } */
 
-int	check_argv(char **argv)
-{
-	int		fd;
-	char	**str;
-	int		i;
+/* int	check_argv(char **argv) */
+/* { */
+/* 	int		fd; */
+/* 	char	**str; */
+/* 	int		i; */
 
-	str = ft_split(argv[1], '.');
-	i = 0;
-	while (str[i])
-		i++;
-	if (i != 2)
-			exit(printf( RED "Invalid file name\n" RESET));
-	if (ft_memcmp(str[1], "cub", ft_strlen(str[1])))
-			exit(printf( RED "Invalid file name\n" RESET));
-	return (0);
-}
+/* 	str = ft_split(argv[1], '.'); */
+/* 	i = 0; */
+/* 	while (str[i]) */
+/* 		i++; */
+/* 	if (i != 2) */
+/* 			exit(printf( RED "Invalid file name\n" RESET)); */
+/* 	if (ft_memcmp(str[1], "cub", ft_strlen(str[1]))) */
+/* 			exit(printf( RED "Invalid file name\n" RESET)); */
+/* 	return (0); */
+/* } */
 
-int main(int argc, char **argv)
-{
-	data_t 			data;
-	texture_t		*texture;
-	mouseAction_t	*mouse;
-	mlxData_t		*mlxData;
+/* int main(int argc, char **argv) */
+/* { */
+/* 	data_t 			data; */
+/* 	texture_t		*texture; */
+/* 	mouseAction_t	*mouse; */
+/* 	mlxData_t		*mlxData; */
 	
-	if (argc < 2)
-		return (print_helper());
-	check_argv(argv);
-	mouse = mouse_global();
-	texture = texture_global();
-	mlxData = mlxData_global();
-	if (cub3d_init(&data, argv))
-	{
-		printf("Malloc error in cub3d_init(). Stop...\n");
-		exit(12);
-	}
-	cub3d(&data);
-//	}
-//	mlx_key_hook(data->mlx_win, key_act, data);
+/* 	if (argc < 2) */
+/* 		return (print_helper()); */
+/* 	check_argv(argv); */
+/* 	mouse = mouse_global(); */
+/* 	texture = texture_global(); */
+/* 	mlxData = mlxData_global(); */
+/* 	if (cub3d_init(&data, argv)) */
+/* 	{ */
+/* 		printf("Malloc error in cub3d_init(). Stop...\n"); */
+/* 		exit(12); */
+/* 	} */
+/* 	cub3d(&data); */
+/* //	} */
+/* //	mlx_key_hook(data->mlx_win, key_act, data); */
 
 
-	mlx_hook(mlxData->mlx_win, KEY_PRESS, 0, key_hook, mouse);
-	mlx_hook(mlxData->mlx_win, KEY_RELEASE, 0, key_hook_release, mouse);
-	mlx_hook(mlxData->mlx_win, WINDOW_CLOSE, 0, ft_close_window, &data);
-	mlx_hook(mlxData->mlx_win, MOUSE_MOVE, 0, mouse_action, &data);
+/* 	mlx_hook(mlxData->mlx_win, KEY_PRESS, 0, key_hook, mouse); */
+/* 	mlx_hook(mlxData->mlx_win, KEY_RELEASE, 0, key_hook_release, mouse); */
+/* 	mlx_hook(mlxData->mlx_win, WINDOW_CLOSE, 0, ft_close_window, &data); */
+/* 	mlx_hook(mlxData->mlx_win, MOUSE_MOVE, 0, mouse_action, &data); */
 
-	mlx_loop_hook(mlxData->mlx_ptr, action_hook, &data);
-	mlx_loop(mlxData->mlx_ptr);
-	return 0;
-}
+/* 	mlx_loop_hook(mlxData->mlx_ptr, action_hook, &data); */
+/* 	mlx_loop(mlxData->mlx_ptr); */
+/* 	return 0; */
+/* } */
