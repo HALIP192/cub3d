@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/09 21:27:15 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/23 20:42:15 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,486 +15,486 @@
 #include "math.h"
 #include <string.h>
 
-double ft_abs(double num)
-{
-	return num > 0 ? num : num * (-1);
-}
+/* double ft_abs(double num) */
+/* { */
+/* 	return num > 0 ? num : num * (-1); */
+/* } */
 
-int	init_floor_ceil_colors(texture_t *texture, char ***texture_split, int i)
-{
-	int		j;
-	char	**buff1;
+/* int	init_floor_ceil_colors(texture_t *texture, char ***texture_split, int i) */
+/* { */
+/* 	int		j; */
+/* 	char	**buff1; */
 
-	if (!texture_split[i][1] || (texture_split[i][0][0] == 'F' && texture->floor != 0) ||
-		(texture_split[i][0][0] == 'C' && texture->ceil != 0))
-	{
-		printf("Error in intialize file. Param number = %d\n", i);
-		return (1);
-	}
-	buff1 = ft_split(texture_split[i][1], ',');
-	j = 0;
-	while (buff1[j])
-	{
-		if (texture_split[i][0][0] == 'F')
-			texture->floor |= ft_atoi(buff1[j]) << (8 * (int)ft_abs((j - 2)));
-		if (texture_split[i][0][0] == 'C')
-			texture->ceil |= ft_atoi(buff1[j]) << (8 * (int)ft_abs((j - 2)));
-		j++;
-		if (j > 3)
-		{
-			printf("Error Floor and Ceil colors must have only 3 haracteristic.\n");
-			return (1);
-		}
-	}
-	return (0);
-}
+/* 	if (!texture_split[i][1] || (texture_split[i][0][0] == 'F' && texture->floor != 0) || */
+/* 		(texture_split[i][0][0] == 'C' && texture->ceil != 0)) */
+/* 	{ */
+/* 		printf("Error in intialize file. Param number = %d\n", i); */
+/* 		return (1); */
+/* 	} */
+/* 	buff1 = ft_split(texture_split[i][1], ','); */
+/* 	j = 0; */
+/* 	while (buff1[j]) */
+/* 	{ */
+/* 		if (texture_split[i][0][0] == 'F') */
+/* 			texture->floor |= ft_atoi(buff1[j]) << (8 * (int)ft_abs((j - 2))); */
+/* 		if (texture_split[i][0][0] == 'C') */
+/* 			texture->ceil |= ft_atoi(buff1[j]) << (8 * (int)ft_abs((j - 2))); */
+/* 		j++; */
+/* 		if (j > 3) */
+/* 		{ */
+/* 			printf("Error Floor and Ceil colors must have only 3 haracteristic.\n"); */
+/* 			return (1); */
+/* 		} */
+/* 	} */
+/* 	return (0); */
+/* } */
 
-int	png_to_img(texture_t *data, mlxData_t *mlxData, char ***texture_split, int i)
-{
-	if (texture_split[i][0][0] == 'N' && texture_split[i][0][1] == 'O')
-	{
-		data->img_ptr[0] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
-		if (!data->img_ptr[0])
-			return (1);
-	} else if (texture_split[i][0][0] == 'S' && texture_split[i][0][1] == 'O')
-	{
-		data->img_ptr[1] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
-		if (!data->img_ptr[1])
-			return (1);
-	} else if (texture_split[i][0][0] == 'W' && texture_split[i][0][1] == 'E')
-	{
-		data->img_ptr[2] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
-		if (!data->img_ptr[2])
-			return (1);
-	} else if (texture_split[i][0][0] == 'E' && texture_split[i][0][1] == 'A')
-	{
-		data->img_ptr[3] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]);
-		if (!data->img_ptr[3])
-			return (1);
-	} else if (texture_split[i][0][0] == 'F' || texture_split[i][0][0] == 'C')
-		return (init_floor_ceil_colors(data, texture_split, i));
-	else
-		return (printf("Invalid init file \n"));
-	return (0);
-}
+/* int	png_to_img(texture_t *data, mlxData_t *mlxData, char ***texture_split, int i) */
+/* { */
+/* 	if (texture_split[i][0][0] == 'N' && texture_split[i][0][1] == 'O') */
+/* 	{ */
+/* 		data->img_ptr[0] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]); */
+/* 		if (!data->img_ptr[0]) */
+/* 			return (1); */
+/* 	} else if (texture_split[i][0][0] == 'S' && texture_split[i][0][1] == 'O') */
+/* 	{ */
+/* 		data->img_ptr[1] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]); */
+/* 		if (!data->img_ptr[1]) */
+/* 			return (1); */
+/* 	} else if (texture_split[i][0][0] == 'W' && texture_split[i][0][1] == 'E') */
+/* 	{ */
+/* 		data->img_ptr[2] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]); */
+/* 		if (!data->img_ptr[2]) */
+/* 			return (1); */
+/* 	} else if (texture_split[i][0][0] == 'E' && texture_split[i][0][1] == 'A') */
+/* 	{ */
+/* 		data->img_ptr[3] = mlx_png_file_to_image(mlxData->mlx_ptr, texture_split[i][1], &data->width[i], &data->height[i]); */
+/* 		if (!data->img_ptr[3]) */
+/* 			return (1); */
+/* 	} else if (texture_split[i][0][0] == 'F' || texture_split[i][0][0] == 'C') */
+/* 		return (init_floor_ceil_colors(data, texture_split, i)); */
+/* 	else */
+/* 		return (printf("Invalid init file \n")); */
+/* 	return (0); */
+/* } */
 
-void	free_texture_helper(char ***texture_split)
-{
-	int	i;
-	int	j;
+/* void	free_texture_helper(char ***texture_split) */
+/* { */
+/* 	int	i; */
+/* 	int	j; */
 
-	i = 0;
-	while (i < 6)
-	{
-		j = 0;
-		while (texture_split[i][j])
-		{
-			free(texture_split[i][j]);
-			j++;
-		}
-		free(texture_split[i]);
-		i++;
-	}
-	free(texture_split);
-}
+/* 	i = 0; */
+/* 	while (i < 6) */
+/* 	{ */
+/* 		j = 0; */
+/* 		while (texture_split[i][j]) */
+/* 		{ */
+/* 			free(texture_split[i][j]); */
+/* 			j++; */
+/* 		} */
+/* 		free(texture_split[i]); */
+/* 		i++; */
+/* 	} */
+/* 	free(texture_split); */
+/* } */
 
 
-int	check_for_double(char ***texture_split)
-{
-	int	i;
-	int	j;
+/* int	check_for_double(char ***texture_split) */
+/* { */
+/* 	int	i; */
+/* 	int	j; */
 
-	i = 0;
-	while (texture_split[i])
-	{
-		j = i + 1;
-		while (texture_split[j])
-		{
-			if (ft_memcmp(texture_split[i][0], texture_split[j][0], ft_max(ft_strlen(texture_split[i][0]), ft_strlen(texture_split[j][0]))) == 0)
-				return (1);
-			j++;
-		}
-		i++;
-	}
-	return (0);
-}
+/* 	i = 0; */
+/* 	while (texture_split[i]) */
+/* 	{ */
+/* 		j = i + 1; */
+/* 		while (texture_split[j]) */
+/* 		{ */
+/* 			if (ft_memcmp(texture_split[i][0], texture_split[j][0], ft_max(ft_strlen(texture_split[i][0]), ft_strlen(texture_split[j][0]))) == 0) */
+/* 				return (1); */
+/* 			j++; */
+/* 		} */
+/* 		i++; */
+/* 	} */
+/* 	return (0); */
+/* } */
 
-int	get_textures_imgs(texture_t *data, char ***texture_split, int i)
-{
-	if (check_for_double(texture_split))
-		exit(printf( RED "Double keys are unacceptable.\n" RESET ));
-	if (texture_split[i][0][0] == 'N' && texture_split[i][0][1] == 'O')
-	{
-		data->imgs[0] =	(int *)mlx_get_data_addr(data->img_ptr[0], &data->bpp[0], &data->sl[0], &data->end[0]);
-		if (!data->imgs[0])
-			return (1);
-	} else if (texture_split[i][0][0] == 'S' && texture_split[i][0][1] == 'O')
-	{
-		data->imgs[1] =	(int *)mlx_get_data_addr(data->img_ptr[1], &data->bpp[1], &data->sl[1], &data->end[1]);
-		if (!data->imgs[1])
-			return (1);
-	} else if (texture_split[i][0][0] == 'W' && texture_split[i][0][1] == 'E')
-	{
-		data->imgs[2] =	(int *)mlx_get_data_addr(data->img_ptr[2], &data->bpp[2], &data->sl[2], &data->end[2]);
-		if (!data->imgs[2])
-			return (1);
-	} else if (texture_split[i][0][0] == 'E' && texture_split[i][0][1] == 'A')
-	{
-		data->imgs[3] =	(int *)mlx_get_data_addr(data->img_ptr[3], &data->bpp[3], &data->sl[3], &data->end[3]);
-		if (!data->imgs[3])
-			return (1);
-	}
-	return (0);
-}
+/* int	get_textures_imgs(texture_t *data, char ***texture_split, int i) */
+/* { */
+/* 	if (check_for_double(texture_split)) */
+/* 		exit(printf( RED "Double keys are unacceptable.\n" RESET )); */
+/* 	if (texture_split[i][0][0] == 'N' && texture_split[i][0][1] == 'O') */
+/* 	{ */
+/* 		data->imgs[0] =	(int *)mlx_get_data_addr(data->img_ptr[0], &data->bpp[0], &data->sl[0], &data->end[0]); */
+/* 		if (!data->imgs[0]) */
+/* 			return (1); */
+/* 	} else if (texture_split[i][0][0] == 'S' && texture_split[i][0][1] == 'O') */
+/* 	{ */
+/* 		data->imgs[1] =	(int *)mlx_get_data_addr(data->img_ptr[1], &data->bpp[1], &data->sl[1], &data->end[1]); */
+/* 		if (!data->imgs[1]) */
+/* 			return (1); */
+/* 	} else if (texture_split[i][0][0] == 'W' && texture_split[i][0][1] == 'E') */
+/* 	{ */
+/* 		data->imgs[2] =	(int *)mlx_get_data_addr(data->img_ptr[2], &data->bpp[2], &data->sl[2], &data->end[2]); */
+/* 		if (!data->imgs[2]) */
+/* 			return (1); */
+/* 	} else if (texture_split[i][0][0] == 'E' && texture_split[i][0][1] == 'A') */
+/* 	{ */
+/* 		data->imgs[3] =	(int *)mlx_get_data_addr(data->img_ptr[3], &data->bpp[3], &data->sl[3], &data->end[3]); */
+/* 		if (!data->imgs[3]) */
+/* 			return (1); */
+/* 	} */
+/* 	return (0); */
+/* } */
 
-int	init_texture(texture_t *data, mlxData_t *mlxData, char ***texture_split)
-{
-	int i;
+/* int	init_texture(texture_t *data, mlxData_t *mlxData, char ***texture_split) */
+/* { */
+/* 	int i; */
 
-	i = 0;
-	data->img_ptr = (void **)malloc(sizeof(void *) * 4);
-	data->imgs = (int **)malloc(sizeof(int *) * 4);
-	data->width = (int *)malloc(sizeof(int) * 4);
-	data->height = (int *)malloc(sizeof(int) * 4);
-	data->bpp = (int *)malloc(sizeof(int) * 4);
-	data->end = (int *)malloc(sizeof(int) * 4);
-	data->sl = (int *)malloc(sizeof(int) * 4);
+/* 	i = 0; */
+/* 	data->img_ptr = (void **)malloc(sizeof(void *) * 4); */
+/* 	data->imgs = (int **)malloc(sizeof(int *) * 4); */
+/* 	data->width = (int *)malloc(sizeof(int) * 4); */
+/* 	data->height = (int *)malloc(sizeof(int) * 4); */
+/* 	data->bpp = (int *)malloc(sizeof(int) * 4); */
+/* 	data->end = (int *)malloc(sizeof(int) * 4); */
+/* 	data->sl = (int *)malloc(sizeof(int) * 4); */
 	
-	while (i < 6)
-	{
-		if (png_to_img(data, mlxData, texture_split, i))
-			return (1);
-		if (get_textures_imgs(data, texture_split, i))
-		{
-			printf("Error in init_texture step = %d. Stop.\n", i);
-			return (1);
-		}
-		i++;
-	}
-	free_texture_helper(texture_split);
-	return (0);
-}
+/* 	while (i < 6) */
+/* 	{ */
+/* 		if (png_to_img(data, mlxData, texture_split, i)) */
+/* 			return (1); */
+/* 		if (get_textures_imgs(data, texture_split, i)) */
+/* 		{ */
+/* 			printf("Error in init_texture step = %d. Stop.\n", i); */
+/* 			return (1); */
+/* 		} */
+/* 		i++; */
+/* 	} */
+/* 	free_texture_helper(texture_split); */
+/* 	return (0); */
+/* } */
 
-void	init_mouseAction(mouseAction_t *data)
-{
-	data->mov_forward = 0;
-	data->mov_back = 0;
-	data->mov_left = 0;
-	data->mov_right = 0;
-	data->rot_left = 0;
-	data->rot_right = 0;
-	data->moveSpeed = 0.07;
-	data->rotSpeed = 0.03;
-	data->mouse_x = 0;
-	data->mouse_y = 0;
+/* void	init_mouseAction(mouseAction_t *data) */
+/* { */
+/* 	data->mov_forward = 0; */
+/* 	data->mov_back = 0; */
+/* 	data->mov_left = 0; */
+/* 	data->mov_right = 0; */
+/* 	data->rot_left = 0; */
+/* 	data->rot_right = 0; */
+/* 	data->moveSpeed = 0.07; */
+/* 	data->rotSpeed = 0.03; */
+/* 	data->mouse_x = 0; */
+/* 	data->mouse_y = 0; */
 
-}
+/* } */
 
-void	init_mlxData(mlxData_t *data, data_t *map_data)
-{
-	data->mlx_ptr = mlx_init();
-	data->mlx_win = mlx_new_window(data->mlx_ptr, map_data->screenWidth, map_data->screenHeight, "cub3d");
+/* void	init_mlxData(mlxData_t *data, data_t *map_data) */
+/* { */
+/* 	data->mlx_ptr = mlx_init(); */
+/* 	data->mlx_win = mlx_new_window(data->mlx_ptr, map_data->screenWidth, map_data->screenHeight, "cub3d"); */
 	
-	int sn;
-	data->img_ptr = mlx_new_image(data->mlx_ptr, map_data->screenWidth, map_data->screenHeight);
-	data->image = (int *)mlx_get_data_addr(data->img_ptr, &sn, &map_data->line_lenght, &sn);
+/* 	int sn; */
+/* 	data->img_ptr = mlx_new_image(data->mlx_ptr, map_data->screenWidth, map_data->screenHeight); */
+/* 	data->image = (int *)mlx_get_data_addr(data->img_ptr, &sn, &map_data->line_lenght, &sn); */
 
-}
+/* } */
 
-int	init_position(data_t *data, char *src, int j, int i)
-{
-	if (src[i] == 'N')
-	{
-		data->dirX = -1.0;
-		data->dirY = 0.0;
-	} else if (src[i] == 'W')
-	{
-		data->dirX = 0.0;
-		data->dirY = 1.0;
-	} else if (src[i] == 'E')
-	{
-		data->dirX = 0.0;
-		data->dirY = -1.0;
-	} else if (src[i] == 'S')
-	{
-		data->dirX = 1.0;
-		data->dirY = 0.0;
-	} else
-		return (1);
-	if (i >= data->mapWidth || i <= 0 ||
-		j >= data->mapHeight || j <= 0)
-		return (1);
-	data->posX = (double)i;
-	data->posY = (double)j;
-	data->planeX = 0.0;
-	data->planeY = 0.66;
-	data->map[j][i]  = 0;
-	return (0);
-}
+/* int	init_position(data_t *data, char *src, int j, int i) */
+/* { */
+/* 	if (src[i] == 'N') */
+/* 	{ */
+/* 		data->dirX = -1.0; */
+/* 		data->dirY = 0.0; */
+/* 	} else if (src[i] == 'W') */
+/* 	{ */
+/* 		data->dirX = 0.0; */
+/* 		data->dirY = 1.0; */
+/* 	} else if (src[i] == 'E') */
+/* 	{ */
+/* 		data->dirX = 0.0; */
+/* 		data->dirY = -1.0; */
+/* 	} else if (src[i] == 'S') */
+/* 	{ */
+/* 		data->dirX = 1.0; */
+/* 		data->dirY = 0.0; */
+/* 	} else */
+/* 		return (1); */
+/* 	if (i >= data->mapWidth || i <= 0 || */
+/* 		j >= data->mapHeight || j <= 0) */
+/* 		return (1); */
+/* 	data->posX = (double)i; */
+/* 	data->posY = (double)j; */
+/* 	data->planeX = 0.0; */
+/* 	data->planeY = 0.66; */
+/* 	data->map[j][i]  = 0; */
+/* 	return (0); */
+/* } */
 
-list_t	*init_screen_and_map(data_t *data, int fd)
-{
-	list_t *list_head;
-	list_t *list_cur;
-	int width;
-	int height;
-	int height_max;
+/* list_t	*init_screen_and_map(data_t *data, int fd) */
+/* { */
+/* 	list_t *list_head; */
+/* 	list_t *list_cur; */
+/* 	int width; */
+/* 	int height; */
+/* 	int height_max; */
 	
-	width = 0;
-	height_max = 0;
-	list_head = ft_lstnew(get_next_line(fd));
-	list_cur = list_head;
-	while (((char *)list_cur->content)[0] == '\n')
-	{
-		free(list_cur->content);
-		list_cur->content = get_next_line(fd);
-		if (!list_cur->content)
-		{
-			printf("Map error.\n");
-			return NULL;
-		}
-	}
-	while (list_cur->content)
-	{
-		height = ft_strlen(list_cur->content) - 1;
-		if (height > height_max)
-			height_max = height;
-		width++;
-		list_cur->next = ft_lstnew(get_next_line(fd));
-		list_cur = list_cur->next;
-	}
-	free(list_cur);
-	data->mapWidth = width;
-	data->mapHeight = height_max;
-	data->screenHeight = 720;//1440;
-	data->screenWidth = 1080;//2560;
-	return (list_head);
-}
+/* 	width = 0; */
+/* 	height_max = 0; */
+/* 	list_head = ft_lstnew(get_next_line(fd)); */
+/* 	list_cur = list_head; */
+/* 	while (((char *)list_cur->content)[0] == '\n') */
+/* 	{ */
+/* 		free(list_cur->content); */
+/* 		list_cur->content = get_next_line(fd); */
+/* 		if (!list_cur->content) */
+/* 		{ */
+/* 			printf("Map error.\n"); */
+/* 			return NULL; */
+/* 		} */
+/* 	} */
+/* 	while (list_cur->content) */
+/* 	{ */
+/* 		height = ft_strlen(list_cur->content) - 1; */
+/* 		if (height > height_max) */
+/* 			height_max = height; */
+/* 		width++; */
+/* 		list_cur->next = ft_lstnew(get_next_line(fd)); */
+/* 		list_cur = list_cur->next; */
+/* 	} */
+/* 	free(list_cur); */
+/* 	data->mapWidth = width; */
+/* 	data->mapHeight = height_max; */
+/* 	data->screenHeight = 720;//1440; */
+/* 	data->screenWidth = 1080;//2560; */
+/* 	return (list_head); */
+/* } */
 
-int lstcpy(data_t *data, char *src, int j)
-{
-	int	i;
+/* int lstcpy(data_t *data, char *src, int j) */
+/* { */
+/* 	int	i; */
 
-	i = 0;
-	while (src[i] && src[i] != '\n')
-	{
-		if (ft_isdigit(src[i]))
-			data->map[j][i] = src[i] - '0';
-		else if (src[i] == 'N' || src[i] == 'S' ||
-				  src[i] == 'W' || src[i] == 'E')
-		{
-			if (init_position(data, src, j, i))
-				return (1);
-		} else if (src[i] == ' ')
-			data->map[j][i] = -1;
-		else
-			return (1);
-		i++;
-	}
-	while (i < data->mapHeight)
-	{
-		data->map[j][i] = -1;
-		i++;
-	}
-	return (0);
+/* 	i = 0; */
+/* 	while (src[i] && src[i] != '\n') */
+/* 	{ */
+/* 		if (ft_isdigit(src[i])) */
+/* 			data->map[j][i] = src[i] - '0'; */
+/* 		else if (src[i] == 'N' || src[i] == 'S' || */
+/* 				  src[i] == 'W' || src[i] == 'E') */
+/* 		{ */
+/* 			if (init_position(data, src, j, i)) */
+/* 				return (1); */
+/* 		} else if (src[i] == ' ') */
+/* 			data->map[j][i] = -1; */
+/* 		else */
+/* 			return (1); */
+/* 		i++; */
+/* 	} */
+/* 	while (i < data->mapHeight) */
+/* 	{ */
+/* 		data->map[j][i] = -1; */
+/* 		i++; */
+/* 	} */
+/* 	return (0); */
 
-}
+/* } */
 
-int	init_rec_check_mas(data_t *data, int **map, int i, int j)
-{
-	if (map[i][j] == -1 || i == data->mapWidth - 1 ||
-		i == 0 || j == data->mapHeight - 1 || j == 0)
-		return (1);
-	map[i][j] = -2;
-	if (map[i + 1][j] == 0)
-		return (init_rec_check_mas(data, map, i + 1, j));
-	if (map[i][j + 1] == 0)
-		return (init_rec_check_mas(data, map, i, j + 1));
-	if (map[i - 1][j] == 0)
-		return (init_rec_check_mas(data, map, i - 1, j));
-	if (map[i][j - 1] == 0)
-		return (init_rec_check_mas(data, map, i, j - 1));
-	return (0);
-}
+/* int	init_rec_check_mas(data_t *data, int **map, int i, int j) */
+/* { */
+/* 	if (map[i][j] == -1 || i == data->mapWidth - 1 || */
+/* 		i == 0 || j == data->mapHeight - 1 || j == 0) */
+/* 		return (1); */
+/* 	map[i][j] = -2; */
+/* 	if (map[i + 1][j] == 0) */
+/* 		return (init_rec_check_mas(data, map, i + 1, j)); */
+/* 	if (map[i][j + 1] == 0) */
+/* 		return (init_rec_check_mas(data, map, i, j + 1)); */
+/* 	if (map[i - 1][j] == 0) */
+/* 		return (init_rec_check_mas(data, map, i - 1, j)); */
+/* 	if (map[i][j - 1] == 0) */
+/* 		return (init_rec_check_mas(data, map, i, j - 1)); */
+/* 	return (0); */
+/* } */
 
-int	recursiv_check_map(data_t *data, int i_check, int j_check)
-{
-	int **mas_cp;
-	int	i;
-	int j;
+/* int	recursiv_check_map(data_t *data, int i_check, int j_check) */
+/* { */
+/* 	int **mas_cp; */
+/* 	int	i; */
+/* 	int j; */
 
-	i = 0;
-	mas_cp = (int **)malloc(sizeof(int *) * data->mapWidth);
-	if (!mas_cp)
-		return (1);
-	while (i < data->mapWidth)
-	{
-		j = 0;
-		mas_cp[i] = (int *)malloc(sizeof(int) * data->mapHeight);
-		while (j < data->mapHeight)
-		{
-			mas_cp[i][j] = data->map[i][j];
-			j++;
-		}
-		i++;
-	}
-	j = 0;
-	if (init_rec_check_mas(data, mas_cp, i_check, j_check))
-		j = 1;
-	i = 0;
-	while (i < data->mapWidth)
-		free(mas_cp[i++]);
-	free(mas_cp);
-	return (j);
-}
+/* 	i = 0; */
+/* 	mas_cp = (int **)malloc(sizeof(int *) * data->mapWidth); */
+/* 	if (!mas_cp) */
+/* 		return (1); */
+/* 	while (i < data->mapWidth) */
+/* 	{ */
+/* 		j = 0; */
+/* 		mas_cp[i] = (int *)malloc(sizeof(int) * data->mapHeight); */
+/* 		while (j < data->mapHeight) */
+/* 		{ */
+/* 			mas_cp[i][j] = data->map[i][j]; */
+/* 			j++; */
+/* 		} */
+/* 		i++; */
+/* 	} */
+/* 	j = 0; */
+/* 	if (init_rec_check_mas(data, mas_cp, i_check, j_check)) */
+/* 		j = 1; */
+/* 	i = 0; */
+/* 	while (i < data->mapWidth) */
+/* 		free(mas_cp[i++]); */
+/* 	free(mas_cp); */
+/* 	return (j); */
+/* } */
 
-int	validate_map(data_t *data)
-{
-	int	i;
-	int	j;
+/* int	validate_map(data_t *data) */
+/* { */
+/* 	int	i; */
+/* 	int	j; */
 
-	i = 0;
-	while (i < data->mapWidth)
-	{
-		j = 0;
-		while (j < data->mapHeight)
-		{
-			if (data->map[i][j] == 0 )
-				return (recursiv_check_map(data, i, j));
-			j++;
-		}
-		i++;
-	}
-	return (1);
-}
+/* 	i = 0; */
+/* 	while (i < data->mapWidth) */
+/* 	{ */
+/* 		j = 0; */
+/* 		while (j < data->mapHeight) */
+/* 		{ */
+/* 			if (data->map[i][j] == 0 ) */
+/* 				return (recursiv_check_map(data, i, j)); */
+/* 			j++; */
+/* 		} */
+/* 		i++; */
+/* 	} */
+/* 	return (1); */
+/* } */
 
-int	map_init(data_t *data, int fd)
-{
-	int		i;
-	list_t	*map;
+/* int	map_init(data_t *data, int fd) */
+/* { */
+/* 	int		i; */
+/* 	list_t	*map; */
 
-	i = 0;
-	map = init_screen_and_map(data, fd);
-	data->map = (int **)malloc(sizeof(int *) * data->mapWidth);
-	if (!data->map)
-		return (1);
-	while (i < data->mapWidth)
-	{
-		data->map[i] = (int *)malloc(sizeof(int) * data->mapHeight);
-		if (!data->map[i])
-			return (1);
-		if (lstcpy(data, map->content, i))
-			return (1);
-		int y = 0;
-		while (y < data->mapHeight)
-		{
-			if (data->map[i][y] == -1)
-				printf("0 ");
-			else
-				printf("%d ", data->map[i][y]);
-			y++;
-		}
-		printf("\n");
-		i++;
-		map = map->next;
-	}
-	if (validate_map(data))
-		return (1);
-	return (0);
-}
+/* 	i = 0; */
+/* 	map = init_screen_and_map(data, fd); */
+/* 	data->map = (int **)malloc(sizeof(int *) * data->mapWidth); */
+/* 	if (!data->map) */
+/* 		return (1); */
+/* 	while (i < data->mapWidth) */
+/* 	{ */
+/* 		data->map[i] = (int *)malloc(sizeof(int) * data->mapHeight); */
+/* 		if (!data->map[i]) */
+/* 			return (1); */
+/* 		if (lstcpy(data, map->content, i)) */
+/* 			return (1); */
+/* 		int y = 0; */
+/* 		while (y < data->mapHeight) */
+/* 		{ */
+/* 			if (data->map[i][y] == -1) */
+/* 				printf("0 "); */
+/* 			else */
+/* 				printf("%d ", data->map[i][y]); */
+/* 			y++; */
+/* 		} */
+/* 		printf("\n"); */
+/* 		i++; */
+/* 		map = map->next; */
+/* 	} */
+/* 	if (validate_map(data)) */
+/* 		return (1); */
+/* 	return (0); */
+/* } */
 
 
 
-int	is_line_valid(char *line)
-{
-	if (line && (line[0] == 'N' && line[1] == 'O') ||
-		(line[0] == 'S' && line[1] == 'O') ||
-		(line[0] == 'W' && line[1] == 'E') ||
-		(line[0] == 'E' && line[1] == 'A') ||
-		(line[0] == 'F') || (line[0] == 'C'))
-		return (1);
-	return (0);
-}
+/* int	is_line_valid(char *line) */
+/* { */
+/* 	if (line && (line[0] == 'N' && line[1] == 'O') || */
+/* 		(line[0] == 'S' && line[1] == 'O') || */
+/* 		(line[0] == 'W' && line[1] == 'E') || */
+/* 		(line[0] == 'E' && line[1] == 'A') || */
+/* 		(line[0] == 'F') || (line[0] == 'C')) */
+/* 		return (1); */
+/* 	return (0); */
+/* } */
 
-char ***get_texture_info(int fd)
-{
-	char	***mas;
-	char	*line;
-	int		cnt;
+/* char ***get_texture_info(int fd) */
+/* { */
+/* 	char	***mas; */
+/* 	char	*line; */
+/* 	int		cnt; */
 
-	mas = (char ***)malloc(sizeof(char **) * 7);
-	if (!mas)
-	{
-		printf("LOL\n");
-	}
-	mas[6] = NULL;
-	line = get_next_line(fd);
-	cnt = 0;
-	while (cnt < 6 && line)
-	{
-		if (line[0] == '\n')
-		{
-			line = get_next_line(fd);
-			continue;
-		}
-		if (is_line_valid(line))
-		{
-			mas[cnt] = ft_split(line, ' ');
-			cnt++;
-		} else
-			return (NULL);
-		if (cnt < 6)
-			line = get_next_line(fd);
-	}
-	return (mas);
-}
+/* 	mas = (char ***)malloc(sizeof(char **) * 7); */
+/* 	if (!mas) */
+/* 	{ */
+/* 		printf("LOL\n"); */
+/* 	} */
+/* 	mas[6] = NULL; */
+/* 	line = get_next_line(fd); */
+/* 	cnt = 0; */
+/* 	while (cnt < 6 && line) */
+/* 	{ */
+/* 		if (line[0] == '\n') */
+/* 		{ */
+/* 			line = get_next_line(fd); */
+/* 			continue; */
+/* 		} */
+/* 		if (is_line_valid(line)) */
+/* 		{ */
+/* 			mas[cnt] = ft_split(line, ' '); */
+/* 			cnt++; */
+/* 		} else */
+/* 			return (NULL); */
+/* 		if (cnt < 6) */
+/* 			line = get_next_line(fd); */
+/* 	} */
+/* 	return (mas); */
+/* } */
 
-int	cub3d_init(data_t *map_data, char **argv)
-{
-	mouseAction_t	*mouse;
-	mlxData_t		*mlx_data;
-	texture_t		*texture;
-	int				fd;
-	char			***texture_split;
+/* int	cub3d_init(data_t *map_data, char **argv) */
+/* { */
+/* 	mouseAction_t	*mouse; */
+/* 	mlxData_t		*mlx_data; */
+/* 	texture_t		*texture; */
+/* 	int				fd; */
+/* 	char			***texture_split; */
 
-	mouse = mouse_global();
-	mlx_data = mlxData_global();
-	texture = texture_global();
+/* 	mouse = mouse_global(); */
+/* 	mlx_data = mlxData_global(); */
+/* 	texture = texture_global(); */
 	
-	fd = open(argv[1], O_RDONLY);
-	if (!fd)
-	{
-		printf("Cann't open file.\n");
-		exit(1);
-	}
-	texture_split = get_texture_info(fd);
-	if (!texture_split)
-	{
-		printf("Invalid initialisation map.\n");
-		close(fd);
-		exit(1);
-	}
-	if (map_init(map_data, fd))
-	{
-		printf("Invalid map.\n");
-		close(fd);
-		exit(1);
-	}
-	init_mouseAction(mouse);
+/* 	fd = open(argv[1], O_RDONLY); */
+/* 	if (!fd) */
+/* 	{ */
+/* 		printf("Cann't open file.\n"); */
+/* 		exit(1); */
+/* 	} */
+/* 	texture_split = get_texture_info(fd); */
+/* 	if (!texture_split) */
+/* 	{ */
+/* 		printf("Invalid initialisation map.\n"); */
+/* 		close(fd); */
+/* 		exit(1); */
+/* 	} */
+/* 	if (map_init(map_data, fd)) */
+/* 	{ */
+/* 		printf("Invalid map.\n"); */
+/* 		close(fd); */
+/* 		exit(1); */
+/* 	} */
+/* 	init_mouseAction(mouse); */
 
-	/* map_data->time = 0; */
-	/* map_data->oldTime = 0; */
+/* 	/1* map_data->time = 0; *1/ */
+/* 	/1* map_data->oldTime = 0; *1/ */
 	
 	
-	init_mlxData(mlx_data, map_data);
+/* 	init_mlxData(mlx_data, map_data); */
 
-	if (init_texture(texture, mlx_data, texture_split))
-	{
-		printf("Error while struct initialisation.Stop.\n");
-		exit(1);
-	}
-	return (0);
-}
+/* 	if (init_texture(texture, mlx_data, texture_split)) */
+/* 	{ */
+/* 		printf("Error while struct initialisation.Stop.\n"); */
+/* 		exit(1); */
+/* 	} */
+/* 	return (0); */
+/* } */
 
 void	init_dda(data_t *data)
 {
