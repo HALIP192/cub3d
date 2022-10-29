@@ -6,12 +6,12 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/24 18:14:17 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/09 20:11:06 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 20:27:06 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PRINTF_COLORS_H
-#define PRINTF_COLORS_H
+# define PRINTF_COLORS_H
 
 # define BLACK			"\033[1;90m"
 # define RED			"\033[1;91m"

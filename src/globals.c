@@ -6,29 +6,29 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/09 20:09:44 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 17:37:47 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 20:34:38 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-texture_t	*texture_global(void)
+t_texture	*texture_global(void)
 {
-	static texture_t	texture = {};
-	
+	static t_texture	texture = {};
+
 	return (&texture);
 }
 
-mlxData_t	*mlxData_global(void)
+t_mlxdata	*mlxdata_global(void)
 {
-	static mlxData_t	mlxData;
+	static t_mlxdata	mlxdata;
 
-	return (&mlxData);
+	return (&mlxdata);
 }
 
-mouseAction_t *mouse_global(void)
+t_mouseaction	*mouse_global(void)
 {
-	static mouseAction_t	mouse;
+	static t_mouseaction	mouse;
 
 	return (&mouse);
 }

@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:05:55 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 15:07:09 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 20:44:42 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,16 @@
 
 int	esc_function(void)
 {
-	mlxData_t	*mlxData;
+	t_mlxdata	*mlxdata;
 
-	mlxData = mlxData_global();
-	mlx_destroy_image(mlxData->mlx_ptr, mlxData->img_ptr);
-	mlx_destroy_window(mlxData->mlx_ptr, mlxData->mlx_win);
+	mlxdata = mlxdata_global();
+	mlx_destroy_image(mlxdata->mlx_ptr, mlxdata->img_ptr);
+	mlx_destroy_window(mlxdata->mlx_ptr, mlxdata->mlx_win);
 	exit(0);
 	return (0);
 }
 
-int	key_hook(int key, mouseAction_t *data)
+int	key_hook(int key, t_mouseaction *data)
 {
 	if (key == KEY_W)
 		data->mov_forward = 1;
@@ -42,18 +42,21 @@ int	key_hook(int key, mouseAction_t *data)
 	return (0);
 }
 
-void	print_map(data_t *data)
+void	print_map(t_data *data)
 {
-	printf("%d\n",data->map[(int)data->posX][(int)data->posY]);
-	int x = 0;
-	int y = 0;
-	while (x < data->mapWidth)
+	int	x;
+	int	y;
+
+	x = 0;
+	y = 0;
+	printf("%d\n", data->map[(int)data->posx][(int)data->posy]);
+	while (x < data->mapwidth)
 	{
 		y = 0;
-		while(y < data->mapHeight)
+		while (y < data->mapheight)
 		{
-			if (x == (int)data->posX && y == (int)data->posY)
-				printf( GREEN "X " RESET );
+			if (x == (int)data->posx && y == (int)data->posy)
+				printf(GREEN "X " RESET);
 			else if (data->map[x][y] > 0 && data->map[x][y] != 1)
 				printf(RED "%d " RESET, data->map[x][y]);
 			else if (data->map[x][y] == 1)
@@ -65,7 +68,5 @@ void	print_map(data_t *data)
 		printf("\n");
 		x++;
 	}
-	printf("x = %f\ny = %f\n", data->posX, data->posY);
+	printf("x = %f\ny = %f\n", data->posx, data->posy);
 }
-
-

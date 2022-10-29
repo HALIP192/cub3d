@@ -6,18 +6,18 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 20:37:47 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 17:37:08 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 21:05:28 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-void	data_cleaner(data_t *data)
+void	data_cleaner(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	while (i < data->mapHeight)
+	while (i < data->mapheight)
 	{
 		free(data->map[i]);
 		i++;
@@ -25,7 +25,7 @@ void	data_cleaner(data_t *data)
 	free(data->map);
 }
 
-void	free_texture(texture_t *data, mlxData_t *mlxData)
+void	free_texture(t_texture *data, t_mlxdata *mlxData)
 {
 	int	i;
 
@@ -45,13 +45,13 @@ void	free_texture(texture_t *data, mlxData_t *mlxData)
 	free(data->sl);
 }
 
-int	ft_close_window(data_t *data)
+int	ft_close_window(t_data *data)
 {
-	mlxData_t	*mlxData;
+	t_mlxdata	*mlxdata;
 
-	mlxData = mlxData_global();
-	mlx_destroy_image(mlxData->mlx_ptr, mlxData->img_ptr);
-	mlx_destroy_window(mlxData->mlx_ptr, mlxData->mlx_win);
+	mlxdata = mlxdata_global();
+	mlx_destroy_image(mlxdata->mlx_ptr, mlxdata->img_ptr);
+	mlx_destroy_window(mlxdata->mlx_ptr, mlxdata->mlx_win);
 	data_cleaner(data);
 	exit(0);
 	return (0);

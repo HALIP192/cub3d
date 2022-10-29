@@ -6,69 +6,86 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:08:54 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 15:11:44 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 21:04:16 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-static inline void floor_ceil_draw(data_t *data, mlxData_t *mlxData, texture_t *texture)
+static inline void	floor_ceil_draw(t_data *data, t_mlxdata *mlxData,
+									t_texture *texture)
 {
-	if (data->y < (data->screenHeight) && data->y < data->drawStart)
-		mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->ceil;//SKY;
-	if (data->y < data->screenHeight && data->y > data->drawEnd)
-		mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->floor;
+	if (data->y < (data->screenheight) && data->y < data->drawstart)
+		mlxData->image[data->y * (data->line_lenght / 4) + data->x]
+			= texture->ceil;
+	if (data->y < data->screenheight && data->y > data->drawend)
+		mlxData->image[data->y * (data->line_lenght / 4) + data->x]
+			= texture->floor;
 }
 
-void	raycasting(data_t *data, texture_t *texture, mlxData_t *mlxData, int texNum)
+void	my_pytpixl(t_data *data, t_texture *texture, t_mlxdata *mlxData,
+				int texy)
 {
-		double	step;
-		double	texPos;
-		int		texY;
-		int		texX;
+	int	texnum;
+	int	texx;
 
-		texX = get_texX(data, texture);
-		step = 1.0 * texture->height[texNum] / data->lineHeight;
-		texPos = (data->drawStart - data->screenHeight / 2 + data->lineHeight / 2) * step;
-		data->y = 0;
-		while (data->y < data->screenHeight)
+	texnum = data->corner;
+	texx = get_texx(data, texture);
+	if (data->side == 1)
+			mlxData->image[data->y * (data->line_lenght / 4) + data->x]
+			= (texture->imgs[texnum][texture->height[texnum] * texy
+				+ texx] >> 1);
+	else
+		mlxData->image[data->y * (data->line_lenght / 4) + data->x]
+			= texture->imgs[texnum][texture->height[texnum] * texy + texx];
+}
+
+void	raycasting(t_data *data, t_texture *texture, t_mlxdata *mlxData,
+					int texNum)
+{
+	double	step;
+	double	texpos;
+	int		texy;
+	int		texx;
+
+	texx = get_texx(data, texture);
+	step = 1.0 * texture->height[texNum] / data->lineheight;
+	texpos = (data->drawstart - data->screenheight / 2 + data->lineheight / 2)
+		* step;
+	data->y = 0;
+	while (data->y < data->screenheight)
+	{
+		floor_ceil_draw(data, mlxData, texture);
+		if (data->y >= data->drawstart && data->y <= data->drawend)
 		{
-			floor_ceil_draw(data, mlxData, texture);
-			if (data->y >= data->drawStart && data->y <= data->drawEnd)
-			{
-				texY = (int)texPos & (texture->height[texNum] - 1);
-				texPos += step;
-				if (data->side == 1)
-					mlxData->image[data->y * (data->line_lenght / 4) + data->x] =
-						(texture->imgs[texNum][texture->height[texNum] * texY + texX] >> 1);
-				else
-					mlxData->image[data->y * (data->line_lenght / 4) + data->x] = 
-						texture->imgs[texNum][texture->height[texNum] * texY + texX];
-			}
-			data->y++;
+			texy = (int)texpos & (texture->height[texNum] - 1);
+			texpos += step;
+			my_pytpixl(data, texture, mlxData, texy);
 		}
+		data->y++;
+	}
 }
 
-void	cub3d(data_t *data)
+void	cub3d(t_data *data)
 {	
-	int			texX;
-	int			texNum;
-	texture_t	*texture;
-	mlxData_t	*mlxData;
+	int			texx;
+	int			texnum;
+	t_texture	*texture;
+	t_mlxdata	*mlxdata;
 
 	data->x = 0;
 	texture = texture_global();
-	mlxData = mlxData_global();
-	while (data->x < data->screenWidth)
+	mlxdata = mlxdata_global();
+	while (data->x < data->screenwidth)
 	{
 		init_dda(data);
-		init_steps_and_sideDist(data);
-		Dda(data);
+		init_steps_and_sidedist(data);
+		dda(data);
 		set_draw_starts(data);
-		texNum = data->corner;
-		raycasting(data, texture, mlxData, texNum);
+		texnum = data->corner;
+		raycasting(data, texture, mlxdata, texnum);
 		data->x++;
-	
 	}
-	mlx_put_image_to_window(mlxData->mlx_ptr, mlxData->mlx_win, mlxData->img_ptr, 0, 0);
+	mlx_put_image_to_window(mlxdata->mlx_ptr, mlxdata->mlx_win,
+		mlxdata->img_ptr, 0, 0);
 }

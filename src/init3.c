@@ -6,24 +6,26 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/23 19:42:22 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/23 19:42:41 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 20:50:49 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-double ft_abs(double num)
+double	ft_abs(double num)
 {
-	return num > 0 ? num : num * (-1);
+	if (num > 0)
+		return (num);
+	return (num * (-1));
 }
 
-int	init_floor_ceil_colors(texture_t *texture, char ***texture_split, int i)
+int	init_floor_ceil_colors(t_texture *texture, char ***texture_split, int i)
 {
 	int		j;
 	char	**buff1;
 
-	if (!texture_split[i][1] || (texture_split[i][0][0] == 'F' && texture->floor != 0) ||
-		(texture_split[i][0][0] == 'C' && texture->ceil != 0))
+	if (!texture_split[i][1] || (texture_split[i][0][0] == 'F' && texture->floor
+				!= 0) || (texture_split[i][0][0] == 'C' && texture->ceil != 0))
 	{
 		printf("Error in intialize file. Param number = %d\n", i);
 		return (1);
@@ -39,7 +41,7 @@ int	init_floor_ceil_colors(texture_t *texture, char ***texture_split, int i)
 		j++;
 		if (j > 3)
 		{
-			printf("Error Floor and Ceil colors must have only 3 haracteristic.\n");
+			printf("Error Floor and Ceil colors must have only 3 haract-cs.\n");
 			return (1);
 		}
 	}

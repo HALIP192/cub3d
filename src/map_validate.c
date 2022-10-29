@@ -6,13 +6,13 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/23 19:12:44 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/23 19:14:42 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 21:15:01 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-int lstcpy(data_t *data, char *src, int j)
+int	lstcpy(t_data *data, char *src, int j)
 {
 	int	i;
 
@@ -21,30 +21,30 @@ int lstcpy(data_t *data, char *src, int j)
 	{
 		if (ft_isdigit(src[i]))
 			data->map[j][i] = src[i] - '0';
-		else if (src[i] == 'N' || src[i] == 'S' ||
-				  src[i] == 'W' || src[i] == 'E')
+		else if (src[i] == 'N' || src[i] == 'S'
+			|| src[i] == 'W' || src[i] == 'E')
 		{
 			if (init_position(data, src, j, i))
 				return (1);
-		} else if (src[i] == ' ')
+		}
+		else if (src[i] == ' ')
 			data->map[j][i] = -1;
 		else
 			return (1);
 		i++;
 	}
-	while (i < data->mapHeight)
+	while (i < data->mapheight)
 	{
 		data->map[j][i] = -1;
 		i++;
 	}
 	return (0);
-
 }
 
-int	init_rec_check_mas(data_t *data, int **map, int i, int j)
+int	init_rec_check_mas(t_data *data, int **map, int i, int j)
 {
-	if (map[i][j] == -1 || i == data->mapWidth - 1 ||
-		i == 0 || j == data->mapHeight - 1 || j == 0)
+	if (map[i][j] == -1 || i == data->mapwidth - 1 ||
+		i == 0 || j == data->mapheight - 1 || j == 0)
 		return (1);
 	map[i][j] = -2;
 	if (map[i + 1][j] == 0)
@@ -58,49 +58,58 @@ int	init_rec_check_mas(data_t *data, int **map, int i, int j)
 	return (0);
 }
 
-int	recursiv_check_map(data_t *data, int i_check, int j_check)
+void	free_map_cp(int **mas_cp, int max)
 {
-	int **mas_cp;
 	int	i;
-	int j;
 
 	i = 0;
-	mas_cp = (int **)malloc(sizeof(int *) * data->mapWidth);
+	while (i < max)
+		free(mas_cp[i++]);
+	free(mas_cp);
+}
+
+int	recursiv_check_map(t_data *data, int i_check, int j_check)
+{
+	int	**mas_cp;
+	int	i;
+	int	j;
+
+	i = 0;
+	mas_cp = (int **)malloc(sizeof(int *) * data->mapwidth);
 	if (!mas_cp)
+	{
+		printf ("LOL/n");
 		return (1);
-	while (i < data->mapWidth)
+	}
+	while (i < data->mapwidth)
 	{
 		j = 0;
-		mas_cp[i] = (int *)malloc(sizeof(int) * data->mapHeight);
-		while (j < data->mapHeight)
+		mas_cp[i] = (int *)malloc(sizeof(int) * data->mapheight);
+		while (j < data->mapheight)
 		{
 			mas_cp[i][j] = data->map[i][j];
 			j++;
 		}
 		i++;
 	}
-	j = 0;
 	if (init_rec_check_mas(data, mas_cp, i_check, j_check))
-		j = 1;
-	i = 0;
-	while (i < data->mapWidth)
-		free(mas_cp[i++]);
-	free(mas_cp);
-	return (j);
+		exit (printf("Map eror1.\n"));
+	free_map_cp(mas_cp, data->mapwidth);
+	return (0);
 }
 
-int	validate_map(data_t *data)
+int	validate_map(t_data *data)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	while (i < data->mapWidth)
+	while (i < data->mapwidth)
 	{
 		j = 0;
-		while (j < data->mapHeight)
+		while (j < data->mapheight)
 		{
-			if (data->map[i][j] == 0 )
+			if (data->map[i][j] == 0)
 				return (recursiv_check_map(data, i, j));
 			j++;
 		}

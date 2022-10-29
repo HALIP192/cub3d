@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/30 17:59:54 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/01 21:21:07 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 17:54:42 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	*ft_free_4split(char **split, size_t id)
 	return (NULL);
 }
 
-int		start_split(char *s, char c, size_t *count, char ***result)
+int	start_split(char *s, char c, size_t *count, char ***result)
 {
 	if (!s)
 		return (1);
@@ -75,5 +75,3 @@ char	**ft_split(char *s, char c)
 	}
 	return (result);
 }
-
-

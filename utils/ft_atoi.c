@@ -6,13 +6,13 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 16:09:45 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/01 17:41:39 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 17:57:52 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-int		ft_isdigit(int c)
+int	ft_isdigit(int c)
 {
 	if (c <= 57 && c >= 48)
 		return (1);
