@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 17:15:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/09 20:58:12 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 17:40:52 by ntitan           ###   ########.fr       */
 /*   Updated: 2022/09/24 21:24:16 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -20,6 +20,10 @@
 #include "printf_colors.h"
 #include "../utils/get_next_line.h"
 #include "../minilibx_opengl_20191021/mlx.h"
+#include "stdio.h"
+#include "math.h"
+#include <string.h>
+
 
 #define SKY 0x87CEED
 #define BITUMEN 0x34495E
@@ -152,5 +156,39 @@ char			***free_mas(char ***mas);
 int				free_map(int **mas, int width);
 int				ft_memcmp(const void *s1, const void *s2, size_t n);
 int				ft_max(int a, int b);
+int				mouse_action(int x, int y, data_t *data);
+int				key_hook_release(int key, data_t *data);
+int				action_hook(data_t *data);
+void			rotate(data_t *data, double angle);
+void			print_map(data_t *data);
+int				key_hook(int key, mouseAction_t *data);
+int				esc_function(void);
+void			cub3d(data_t *data);
+void			raycasting(data_t *data, texture_t *texture, mlxData_t *mlxData, int texNum);
+int				get_texX(data_t *data, texture_t *texture);
+void			set_draw_starts(data_t *data);
+void			Dda(data_t *data);
+void			init_steps_and_sideDist(data_t *data);
+void			init_dda(data_t *data);
+int				cub3d_init(data_t *map_data, char **argv);
+char			***get_texture_info(int fd);
+int				is_line_valid(char *line);
+int				map_init(data_t *data, int fd);
+int				validate_map(data_t *data);
+int				recursiv_check_map(data_t *data, int i_check, int j_check);
+int				init_rec_check_mas(data_t *data, int **map, int i, int j);
+int				lstcpy(data_t *data, char *src, int j);
+list_t			*init_screen_and_map(data_t *data, int fd);
+int				init_position(data_t *data, char *src, int j, int i);
+void			init_mlxData(mlxData_t *data, data_t *map_data);
+void			init_mouseAction(mouseAction_t *data);
+int				init_texture(texture_t *data, mlxData_t *mlxData, char ***texture_split);
+int				get_textures_imgs(texture_t *data, char ***texture_split, int i);
+int				heck_for_double(char ***texture_split);
+void			free_texture_helper(char ***texture_split);
+int				png_to_img(texture_t *data, mlxData_t *mlxData, char ***texture_split, int i);
+int				init_floor_ceil_colors(texture_t *texture, char ***texture_split, int i);
+double			ft_abs(double num);
+int				ft_close_window(data_t *data);
 #endif
 

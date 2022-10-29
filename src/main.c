@@ -6,13 +6,13 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/09 20:48:53 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/23 18:48:47 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 17:39:27 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-int	print_helper(void)
+static inline int	print_helper(void)
 {
 	printf( RED "Invalid arguments\n" RESET);
 	printf( YELLOW "Usadge:\n" RESET);
@@ -20,7 +20,7 @@ int	print_helper(void)
 	return (0);
 }
 
-int	check_argv(char **argv)
+static inline int	check_argv(char **argv)
 {
 	int		fd;
 	char	**str;

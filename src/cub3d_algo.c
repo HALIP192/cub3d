@@ -6,14 +6,11 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/23 20:42:15 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/10/29 17:29:08 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/cub3d.h"
-#include "stdio.h"
-#include "math.h"
-#include <string.h>
+#include "../includes/cub3d.h"
 
 /* double ft_abs(double num) */
 /* { */
@@ -496,41 +493,65 @@
 /* 	return (0); */
 /* } */
 
-void	init_dda(data_t *data)
-{
-		data->cameraX = 2 * data->x / (double)data->screenWidth - 1;
-		data->rayDirX = data->dirX + data->planeX * data->cameraX;
-		data->rayDirY = data->dirY + data->planeY * data->cameraX;
-		data->mapX = (int)data->posX;
-		data->mapY = (int)data->posY;
-		data->deltaDistX = (data->rayDirX == 0) ? 1e30 : ft_abs(1 / data->rayDirX);
-		data->deltaDistY = (data->rayDirY == 0) ? 1e30 : ft_abs(1 / data->rayDirY);
+/* void	init_dda(data_t *data) */
+/* { */
+/* 		data->cameraX = 2 * data->x / (double)data->screenWidth - 1; */
+/* 		data->rayDirX = data->dirX + data->planeX * data->cameraX; */
+/* 		data->rayDirY = data->dirY + data->planeY * data->cameraX; */
+/* 		data->mapX = (int)data->posX; */
+/* 		data->mapY = (int)data->posY; */
+/* 		data->deltaDistX = (data->rayDirX == 0) ? 1e30 : ft_abs(1 / data->rayDirX); */
+/* 		data->deltaDistY = (data->rayDirY == 0) ? 1e30 : ft_abs(1 / data->rayDirY); */
 
-}
+/* } */
 
-void	init_steps_and_sideDist(data_t *data)
+/* void	init_steps_and_sideDist(data_t *data) */
+/* { */
+/* 	if (data->rayDirX < 0) */
+/* 	{ */
+/* 		data->stepX = -1; */
+/* 		data->sideDistX = (data->posX - data->mapX) * data->deltaDistX; */
+/* 	} */
+/* 	else */
+/* 	{ */
+/* 		data->stepX = 1; */
+/* 		data->sideDistX = (data->mapX + 1.0 - data->posX) * data->deltaDistX; */
+/* 	} */
+/* 	if (data->rayDirY < 0) */
+/* 	{ */	
+/* 		data->stepY = -1; */
+/* 		data->sideDistY = (data->posY - data->mapY) * data->deltaDistY; */
+/* 	} */
+/* 	else */
+/* 	{ */
+/* 		data->stepY = 1; */
+/* 		data->sideDistY = (data->mapY + 1.0 - data->posY) * data->deltaDistY; */
+/* 	} */
+
+/* } */
+
+static inline void dda_step(data_t *data)
 {
-	if (data->rayDirX < 0)
+	if (data->sideDistX < data->sideDistY)		
 	{
-		data->stepX = -1;
-		data->sideDistX = (data->posX - data->mapX) * data->deltaDistX;
+		data->sideDistX += data->deltaDistX;
+		data->mapX += data->stepX;
+		data->side = 0;
+		if (data->posX >= data->mapX)
+			data->corner = 1;
+		else
+			data->corner = 0;
 	}
 	else
 	{
-		data->stepX = 1;
-		data->sideDistX = (data->mapX + 1.0 - data->posX) * data->deltaDistX;
+		data->sideDistY += data->deltaDistY;
+		data->mapY += data->stepY;
+		data->side = 1;
+		if (data->posY >= data->mapY)
+			data->corner = 2;
+		else
+			data->corner = 3;
 	}
-	if (data->rayDirY < 0)
-	{	
-		data->stepY = -1;
-		data->sideDistY = (data->posY - data->mapY) * data->deltaDistY;
-	}
-	else
-	{
-		data->stepY = 1;
-		data->sideDistY = (data->mapY + 1.0 - data->posY) * data->deltaDistY;
-	}
-
 }
 
 void	Dda(data_t *data)
@@ -539,26 +560,7 @@ void	Dda(data_t *data)
 
 	while (hit == 0)
 	{
-		if (data->sideDistX < data->sideDistY)		
-		{
-			data->sideDistX += data->deltaDistX;
-			data->mapX += data->stepX;
-			data->side = 0;
-			if (data->posX >= data->mapX)
-				data->corner = 1;
-			else
-				data->corner = 0;
-		}
-		else
-		{
-			data->sideDistY += data->deltaDistY;
-			data->mapY += data->stepY;
-			data->side = 1;
-			if (data->posY >= data->mapY)
-				data->corner = 2;
-			else
-				data->corner = 3;
-		}
+		dda_step(data);	
 		if (data->map[(int)data->mapX][(int)data->mapY] > 0) 
 			hit = 1;
 	}
@@ -600,215 +602,222 @@ int	get_texX(data_t *data, texture_t *texture)
 	return (texX);
 }
 
-void	raycasting(data_t *data, texture_t *texture, mlxData_t *mlxData, int texNum)
-{
-		double	step;
-		double	texPos;
-		int		texY;
-		int		texX;
+/* static inline void floor_ceil_draw(data_t *data, mlxData_t *mlxData, texture_t *texture) */
+/* { */
+/* 	if (data->y < (data->screenHeight) && data->y < data->drawStart) */
+/* 		mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->ceil;//SKY; */
+/* 	if (data->y < data->screenHeight && data->y > data->drawEnd) */
+/* 		mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->floor; */
+/* } */
 
-		texX = get_texX(data, texture);
-		step = 1.0 * texture->height[texNum] / data->lineHeight;
-		texPos = (data->drawStart - data->screenHeight / 2 + data->lineHeight / 2) * step;
-		data->y = 0;
-		while (data->y < data->screenHeight)
-		{
-			if (data->y < (data->screenHeight) && data->y < data->drawStart)
-				mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->ceil;//SKY;
-			if (data->y < data->screenHeight && data->y > data->drawEnd)
-				mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->floor;
-			if (data->y >= data->drawStart && data->y <= data->drawEnd)
-			{
-				texY = (int)texPos & (texture->height[texNum] - 1);
-				texPos += step;
-				if (data->side == 1)
-					mlxData->image[data->y * (data->line_lenght / 4) + data->x] = (texture->imgs[texNum][texture->height[texNum] * texY + texX] >> 1);
-				else
-					mlxData->image[data->y * (data->line_lenght / 4) + data->x] = texture->imgs[texNum][texture->height[texNum] * texY + texX];
-			}
-			data->y++;
-		}
-}
+/* void	raycasting(data_t *data, texture_t *texture, mlxData_t *mlxData, int texNum) */
+/* { */
+/* 		double	step; */
+/* 		double	texPos; */
+/* 		int		texY; */
+/* 		int		texX; */
 
-void	cub3d(data_t *data)
-{	
-	int			texX;
-	int			texNum;
-	texture_t	*texture;
-	mlxData_t	*mlxData;
+/* 		texX = get_texX(data, texture); */
+/* 		step = 1.0 * texture->height[texNum] / data->lineHeight; */
+/* 		texPos = (data->drawStart - data->screenHeight / 2 + data->lineHeight / 2) * step; */
+/* 		data->y = 0; */
+/* 		while (data->y < data->screenHeight) */
+/* 		{ */
+/* 			floor_ceil_draw(data, mlxData, texture); */
+/* 			if (data->y >= data->drawStart && data->y <= data->drawEnd) */
+/* 			{ */
+/* 				texY = (int)texPos & (texture->height[texNum] - 1); */
+/* 				texPos += step; */
+/* 				if (data->side == 1) */
+/* 					mlxData->image[data->y * (data->line_lenght / 4) + data->x] = */
+/* 						(texture->imgs[texNum][texture->height[texNum] * texY + texX] >> 1); */
+/* 				else */
+/* 					mlxData->image[data->y * (data->line_lenght / 4) + data->x] = */ 
+/* 						texture->imgs[texNum][texture->height[texNum] * texY + texX]; */
+/* 			} */
+/* 			data->y++; */
+/* 		} */
+/* } */
 
-	data->x = 0;
-	texture = texture_global();
-	mlxData = mlxData_global();
-	while (data->x < data->screenWidth)
-	{
-		init_dda(data);
-		init_steps_and_sideDist(data);
-		Dda(data);
-		set_draw_starts(data);
-		texNum = data->corner;
-		raycasting(data, texture, mlxData, texNum);
-		data->x++;
+/* void	cub3d(data_t *data) */
+/* { */	
+/* 	int			texX; */
+/* 	int			texNum; */
+/* 	texture_t	*texture; */
+/* 	mlxData_t	*mlxData; */
+
+/* 	data->x = 0; */
+/* 	texture = texture_global(); */
+/* 	mlxData = mlxData_global(); */
+/* 	while (data->x < data->screenWidth) */
+/* 	{ */
+/* 		init_dda(data); */
+/* 		init_steps_and_sideDist(data); */
+/* 		Dda(data); */
+/* 		set_draw_starts(data); */
+/* 		texNum = data->corner; */
+/* 		raycasting(data, texture, mlxData, texNum); */
+/* 		data->x++; */
 	
-	}
-	mlx_put_image_to_window(mlxData->mlx_ptr, mlxData->mlx_win, mlxData->img_ptr, 0, 0);
-}
+/* 	} */
+/* 	mlx_put_image_to_window(mlxData->mlx_ptr, mlxData->mlx_win, mlxData->img_ptr, 0, 0); */
+/* } */
 
-int	esc_function(void)
-{
-	mlxData_t	*mlxData;
+/* int	esc_function(void) */
+/* { */
+/* 	mlxData_t	*mlxData; */
 
-	mlxData = mlxData_global();
-	mlx_destroy_image(mlxData->mlx_ptr, mlxData->img_ptr);
-	mlx_destroy_window(mlxData->mlx_ptr, mlxData->mlx_win);
-	exit(0);
-	return (0);
-}
+/* 	mlxData = mlxData_global(); */
+/* 	mlx_destroy_image(mlxData->mlx_ptr, mlxData->img_ptr); */
+/* 	mlx_destroy_window(mlxData->mlx_ptr, mlxData->mlx_win); */
+/* 	exit(0); */
+/* 	return (0); */
+/* } */
 
-int	key_hook(int key, mouseAction_t *data)
-{
-	if (key == KEY_W)
-		data->mov_forward = 1;
-	if (key == KEY_S)
-		data->mov_back = 1;
-	if (key == KEY_A)
-		data->mov_left = 1;
-	if (key == KEY_D)
-		data->mov_right = 1;
-	if (key == KEY_LEFT)
-		data->rot_left = 1;
-	if (key == KEY_RIGHT)
-		data->rot_right = 1;
-	if (key == KEY_ESC)
-		esc_function();
-	return (0);
-}
+/* int	key_hook(int key, mouseAction_t *data) */
+/* { */
+/* 	if (key == KEY_W) */
+/* 		data->mov_forward = 1; */
+/* 	if (key == KEY_S) */
+/* 		data->mov_back = 1; */
+/* 	if (key == KEY_A) */
+/* 		data->mov_left = 1; */
+/* 	if (key == KEY_D) */
+/* 		data->mov_right = 1; */
+/* 	if (key == KEY_LEFT) */
+/* 		data->rot_left = 1; */
+/* 	if (key == KEY_RIGHT) */
+/* 		data->rot_right = 1; */
+/* 	if (key == KEY_ESC) */
+/* 		esc_function(); */
+/* 	return (0); */
+/* } */
 
-void	print_map(data_t *data)
-{
-	printf("%d\n",data->map[(int)data->posX][(int)data->posY]);
-	int x = 0;
-	int y = 0;
-	while (x < data->mapWidth)
-	{
-		y = 0;
-		while(y < data->mapHeight)
-		{
-			if (x == (int)data->posX && y == (int)data->posY)
-				printf( GREEN "X " RESET );
-			else if (data->map[x][y] > 0 && data->map[x][y] != 1)
-				printf(RED "%d " RESET, data->map[x][y]);
-			else if (data->map[x][y] == 1)
-				printf(BLUE "1 " RESET);
-			else if (data->map[x][y] == -1 || data->map[x][y] == 0)
-				printf("0 ");
-			y++;
-		}
-		printf("\n");
-		x++;
-	}
-	printf("x = %f\ny = %f\n", data->posX, data->posY);
-}
-
-
-
-void	rotate(data_t *data, double angle)
-{
-	double buff1;
-	double buff2;
-
-	buff1 = data->dirX;
-	data->dirX = data->dirX * cos(angle) - data->dirY * sin(angle);
-	data->dirY = buff1 * sin(angle) + data->dirY * cos(angle);
-	buff2 = data->planeX;
-	data->planeX = data->planeX * cos(angle) - data->planeY * sin(angle);
-	data->planeY = buff2 * sin(angle) + data->planeY * cos(angle);
-}
+/* void	print_map(data_t *data) */
+/* { */
+/* 	printf("%d\n",data->map[(int)data->posX][(int)data->posY]); */
+/* 	int x = 0; */
+/* 	int y = 0; */
+/* 	while (x < data->mapWidth) */
+/* 	{ */
+/* 		y = 0; */
+/* 		while(y < data->mapHeight) */
+/* 		{ */
+/* 			if (x == (int)data->posX && y == (int)data->posY) */
+/* 				printf( GREEN "X " RESET ); */
+/* 			else if (data->map[x][y] > 0 && data->map[x][y] != 1) */
+/* 				printf(RED "%d " RESET, data->map[x][y]); */
+/* 			else if (data->map[x][y] == 1) */
+/* 				printf(BLUE "1 " RESET); */
+/* 			else if (data->map[x][y] == -1 || data->map[x][y] == 0) */
+/* 				printf("0 "); */
+/* 			y++; */
+/* 		} */
+/* 		printf("\n"); */
+/* 		x++; */
+/* 	} */
+/* 	printf("x = %f\ny = %f\n", data->posX, data->posY); */
+/* } */
 
 
 
-int	action_hook(data_t *data)
-{
-	mouseAction_t	*mouse;
+/* void	rotate(data_t *data, double angle) */
+/* { */
+/* 	double buff1; */
+/* 	double buff2; */
 
-	mouse = mouse_global();
-	if (mouse->mov_forward == 1)
-	{
-		if (data->map[(int)(data->posX + data->dirX * mouse->moveSpeed)][(int)data->posY] == 0)
-			data->posX += data->dirX * mouse->moveSpeed;
-		if (data->map[(int)data->posX][(int)(data->posY + data->dirY * mouse->moveSpeed)] == 0)
-			data->posY += data->dirY * mouse->moveSpeed;
-	}
-	if (mouse->mov_back == 1)
-	{
-		if (data->map[(int)(data->posX - data->dirX * mouse->moveSpeed)][(int)data->posY] == 0)
-			data->posX -= data->dirX * mouse->moveSpeed;
-		if (data->map[(int)data->posX][(int)(data->posY - data->dirY * mouse->moveSpeed)] == 0)
-			data->posY -= data->dirY * mouse->moveSpeed;
-	}
-	if (mouse->mov_right == 1)
-	{
-		if (data->map[(int)data->posX][(int)(data->posY - data->dirX * mouse->moveSpeed)] == 0)
-			data->posY -= data->dirX * mouse->moveSpeed;
-		if (data->map[(int)(data->posX + data->dirY * mouse->moveSpeed)][(int)data->posY] == 0)
-			data->posX += data->dirY * mouse->moveSpeed;
-	}
-	if (mouse->mov_left == 1)
-	{
-		if (data->map[(int)(data->posX - data->dirY * mouse->moveSpeed)][(int)data->posY] == 0)
-			data->posX -= data->dirY * mouse->moveSpeed; 
-		if (data->map[(int)data->posX][(int)(data->posY + data->dirX * mouse->moveSpeed)] == 0)
-			data->posY += data->dirX * mouse->moveSpeed;
+/* 	buff1 = data->dirX; */
+/* 	data->dirX = data->dirX * cos(angle) - data->dirY * sin(angle); */
+/* 	data->dirY = buff1 * sin(angle) + data->dirY * cos(angle); */
+/* 	buff2 = data->planeX; */
+/* 	data->planeX = data->planeX * cos(angle) - data->planeY * sin(angle); */
+/* 	data->planeY = buff2 * sin(angle) + data->planeY * cos(angle); */
+/* } */
 
-	}
-	if (mouse->rot_right == 1)
-		rotate(data, -(mouse->rotSpeed));
-	if (mouse->rot_left == 1)
-		rotate(data, mouse->rotSpeed);
-	print_map(data);
-	cub3d(data);
-	return (0);
-}
 
-int	key_hook_release(int key, data_t *data)
-{
-	mouseAction_t	*mouse;
 
-	mouse = mouse_global();
-	if (key == 13)
-		mouse->mov_forward = 0;
-	if (key == 1)
-		mouse->mov_back = 0;
-	if (key == 0)
-		mouse->mov_left = 0;
-	if (key == 2)
-		mouse->mov_right = 0;
-	if (key == 123)
-		mouse->rot_left = 0;
-	if (key == 124)
-		mouse->rot_right = 0;
+/* int	action_hook(data_t *data) */
+/* { */
+/* 	mouseAction_t	*mouse; */
 
-	return (0);
-}
+/* 	mouse = mouse_global(); */
+/* 	if (mouse->mov_forward == 1) */
+/* 	{ */
+/* 		if (data->map[(int)(data->posX + data->dirX * mouse->moveSpeed)][(int)data->posY] == 0) */
+/* 			data->posX += data->dirX * mouse->moveSpeed; */
+/* 		if (data->map[(int)data->posX][(int)(data->posY + data->dirY * mouse->moveSpeed)] == 0) */
+/* 			data->posY += data->dirY * mouse->moveSpeed; */
+/* 	} */
+/* 	if (mouse->mov_back == 1) */
+/* 	{ */
+/* 		if (data->map[(int)(data->posX - data->dirX * mouse->moveSpeed)][(int)data->posY] == 0) */
+/* 			data->posX -= data->dirX * mouse->moveSpeed; */
+/* 		if (data->map[(int)data->posX][(int)(data->posY - data->dirY * mouse->moveSpeed)] == 0) */
+/* 			data->posY -= data->dirY * mouse->moveSpeed; */
+/* 	} */
+/* 	if (mouse->mov_right == 1) */
+/* 	{ */
+/* 		if (data->map[(int)data->posX][(int)(data->posY - data->dirX * mouse->moveSpeed)] == 0) */
+/* 			data->posY -= data->dirX * mouse->moveSpeed; */
+/* 		if (data->map[(int)(data->posX + data->dirY * mouse->moveSpeed)][(int)data->posY] == 0) */
+/* 			data->posX += data->dirY * mouse->moveSpeed; */
+/* 	} */
+/* 	if (mouse->mov_left == 1) */
+/* 	{ */
+/* 		if (data->map[(int)(data->posX - data->dirY * mouse->moveSpeed)][(int)data->posY] == 0) */
+/* 			data->posX -= data->dirY * mouse->moveSpeed; */ 
+/* 		if (data->map[(int)data->posX][(int)(data->posY + data->dirX * mouse->moveSpeed)] == 0) */
+/* 			data->posY += data->dirX * mouse->moveSpeed; */
 
-int mouse_action(int x, int y, data_t *data)
-{
-	double			dx;
-	double			dy;
-	mouseAction_t	*mouse;
+/* 	} */
+/* 	if (mouse->rot_right == 1) */
+/* 		rotate(data, -(mouse->rotSpeed)); */
+/* 	if (mouse->rot_left == 1) */
+/* 		rotate(data, mouse->rotSpeed); */
+/* 	print_map(data); */
+/* 	cub3d(data); */
+/* 	return (0); */
+/* } */
 
-	mouse = mouse_global();
+/* int	key_hook_release(int key, data_t *data) */
+/* { */
+/* 	mouseAction_t	*mouse; */
 
-	dx = (x - mouse->mouse_x) * 0.05;
-	dy = y - mouse->mouse_y;
+/* 	mouse = mouse_global(); */
+/* 	if (key == 13) */
+/* 		mouse->mov_forward = 0; */
+/* 	if (key == 1) */
+/* 		mouse->mov_back = 0; */
+/* 	if (key == 0) */
+/* 		mouse->mov_left = 0; */
+/* 	if (key == 2) */
+/* 		mouse->mov_right = 0; */
+/* 	if (key == 123) */
+/* 		mouse->rot_left = 0; */
+/* 	if (key == 124) */
+/* 		mouse->rot_right = 0; */
+
+/* 	return (0); */
+/* } */
+
+/* int mouse_action(int x, int y, data_t *data) */
+/* { */
+/* 	double			dx; */
+/* 	double			dy; */
+/* 	mouseAction_t	*mouse; */
+
+/* 	mouse = mouse_global(); */
+
+/* 	dx = (x - mouse->mouse_x) * 0.05; */
+/* 	dy = y - mouse->mouse_y; */
 	
-	rotate(data, mouse->rotSpeed * (-dx));
+/* 	rotate(data, mouse->rotSpeed * (-dx)); */
 
-	mouse->mouse_x = x;
-	mouse->mouse_y = y;
+/* 	mouse->mouse_x = x; */
+/* 	mouse->mouse_y = y; */
 
-	return (0);
-}
+/* 	return (0); */
+/* } */
 
 /* int	print_helper(void) */
 /* { */
