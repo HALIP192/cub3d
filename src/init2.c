@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/23 19:39:39 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/05 18:07:57 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/05 18:28:35 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,16 @@ int	kostil2(t_texture *data, t_mlxdata *mlxData,
 		data->img_ptr[0] = mlx_png_file_to_image(mlxData->mlx_ptr,
 				texture_split[i][1], &data->width[i], &data->height[i]);
 		if (!data->img_ptr[0])
-			exit (printf(RED "malloc error.\n" RESET "%s:%d\n", __FILE__, __LINE__));
+			exit (printf(RED "malloc error.\n" RESET "%s:%d\n",
+					__FILE__, __LINE__));
 	}
 	else if (texture_split[i][0][0] == 'S' && texture_split[i][0][1] == 'O')
 	{
 		data->img_ptr[1] = mlx_png_file_to_image(mlxData->mlx_ptr,
 				texture_split[i][1], &data->width[i], &data->height[i]);
 		if (!data->img_ptr[1])
-			exit (printf(RED "malloc error.\n" RESET "%s:%d\n", __FILE__, __LINE__));
+			exit (printf(RED "malloc error.\n" RESET "%s:%d\n",
+					__FILE__, __LINE__));
 	}
 	else
 	{
@@ -86,7 +88,8 @@ int	kostil3(t_texture *data, char ***texture_split, int i)
 int	get_textures_imgs(t_texture *data, char ***texture_split, int i)
 {
 	if (check_for_double(texture_split))
-		exit(printf(RED "Double keys are unacceptable.\n" RESET "%s:%d\n", __FILE__, __LINE__));
+		exit(printf(RED "Double keys are unacceptable.\n" RESET "%s:%d\n",
+				__FILE__, __LINE__));
 	if (kostil3(data, texture_split, i))
 	{
 		return (1);

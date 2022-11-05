@@ -6,13 +6,14 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 19:51:40 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/05 18:09:35 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/05 18:29:44 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-t_list	*init_screen_and_map2(t_data *data, int fd, t_list *list_cur, t_list *list_head)
+t_list	*init_screen_and_map2(t_data *data, int fd, t_list *list_cur,
+							t_list *list_head)
 {
 	int		width;
 	int		height;
