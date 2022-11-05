@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 19:51:40 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/05 16:04:35 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/05 18:09:35 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,9 @@ t_list	*init_screen_and_map(t_data *data, int fd)
 	{
 		free(list_cur->content);
 		list_cur->content = get_next_line(fd);
-		printf("%s ==\n", (char *)list_cur->content);
 		if (!list_cur->content)
 		{
-			printf("Map error.\n");
+			printf("Map error.%s:%d\n", __FILE__, __LINE__);
 			return (NULL);
 		}
 	}

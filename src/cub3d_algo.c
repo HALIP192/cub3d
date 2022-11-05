@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 13:54:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 20:33:11 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/05 17:53:21 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ static inline void	dda_step(t_data *data)
 {
 	if (data->sidedistx < data->sidedisty)
 	{
-		data->sidedisty += data->deltadisty;
+		data->sidedistx += data->deltadistx;
 		data->mapx += data->stepx;
 		data->side = 0;
-		if (data->posx >= data->mapx)
+		if (data->posx >= data->mapx && data->side == 0)
 			data->corner = 1;
 		else
 			data->corner = 0;
@@ -29,7 +29,7 @@ static inline void	dda_step(t_data *data)
 		data->sidedisty += data->deltadisty;
 		data->mapy += data->stepy;
 		data->side = 1;
-		if (data->posy >= data->mapy)
+		if (data->posy >= data->mapy && data->side == 1)
 			data->corner = 2;
 		else
 			data->corner = 3;

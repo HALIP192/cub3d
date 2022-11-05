@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/23 18:49:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 20:49:30 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/05 18:05:02 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,17 +91,17 @@ int	cub3d_init(t_data *map_data, char **argv)
 	texture = texture_global();
 	fd = open(argv[1], O_RDONLY);
 	if (!fd)
-		exit(printf("Cann't open file.\n"));
+		exit(printf("Cann't open file %s. %s:%d.\n", argv[1], __FILE__, __LINE__));
 	texture_split = get_texture_info(fd);
 	if (!texture_split || map_init(map_data, fd))
 	{
-		printf("Invalid initialisation map.\n");
+		printf("Invalid initialisation map. %s:%d\n", __FILE__, __LINE__);
 		close(fd);
 		exit(1);
 	}
 	init_mouse_action(mouse);
 	init_mlxdata(mlx_data, map_data);
 	if (init_texture(texture, mlx_data, texture_split))
-		exit(printf("Error while struct initialisation.Stop.\n"));
+		exit(printf("Error while struct initialisation.Stop. %s:%d\n", __FILE__, __LINE__));
 	return (0);
 }

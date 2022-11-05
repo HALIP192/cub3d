@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/23 19:12:44 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/05 15:57:34 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/05 18:10:51 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,7 @@ int	recursiv_check_map(t_data *data, int i_check, int j_check)
 	i = 0;
 	mas_cp = (int **)malloc(sizeof(int *) * data->mapwidth);
 	if (!mas_cp)
-	{
-		printf ("LOL/n");
-		return (1);
-	}
+		exit(printf("error: %s: malloc error: %d", __FILE__, __LINE__));
 	while (i < data->mapwidth)
 	{
 		j = 0;
@@ -92,21 +89,6 @@ int	recursiv_check_map(t_data *data, int i_check, int j_check)
 		}
 		i++;
 	}
-	
-	i = 0;
-	while (i < data->mapwidth)
-	{
-		j = 0;
-		while (j < data->mapheight)
-		{
-			printf("%d ",mas_cp[i][j]);
-			j++;
-		}
-		printf("\n");
-		i++;
-	}
-
-
 	if (init_rec_check_mas(data, mas_cp, i_check, j_check))
 		exit (printf("Map error1.\n"));
 	free_map_cp(mas_cp, data->mapwidth);
