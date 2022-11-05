@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/23 19:12:44 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 21:15:01 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/05 15:57:34 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,23 @@ int	recursiv_check_map(t_data *data, int i_check, int j_check)
 		}
 		i++;
 	}
+	
+	i = 0;
+	while (i < data->mapwidth)
+	{
+		j = 0;
+		while (j < data->mapheight)
+		{
+			printf("%d ",mas_cp[i][j]);
+			j++;
+		}
+		printf("\n");
+		i++;
+	}
+
+
 	if (init_rec_check_mas(data, mas_cp, i_check, j_check))
-		exit (printf("Map eror1.\n"));
+		exit (printf("Map error1.\n"));
 	free_map_cp(mas_cp, data->mapwidth);
 	return (0);
 }
