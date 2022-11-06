@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:08:54 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/05 18:21:59 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/06 18:55:06 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,28 @@ void	my_pytpixl(t_data *data, t_texture *texture, t_mlxdata *mlxData,
 			= texture->imgs[texnum][texture->height[texnum] * texy + texx];
 }
 
+void minimap_draw(t_data *data, t_texture *texture, t_mlxdata *mlxData)
+{
+	if (data->y / 2 < data->mapheight && data->x / 2 < data->mapwidth)
+	{
+		if (data->x == (int)data->posx && data->y == (int)data->posy ||
+			data->x == (int)data->posx && data->y - 1 == (int)data->posy ||
+			data->x - 1 == (int)data->posx && data->y == (int)data->posy ||
+			data->x - 1 == (int)data->posx && data->y - 1 == (int)data->posy)
+			mlxData->image[data->y * (data->line_lenght / 4) + data->x]
+			= 0x0000ff00;
+		if (data->map[data->x][data->y] != 0 ||
+			data->map[data->x][data->y - 1] != 0 ||
+			data->map[data->x - 1][data->y] != 0 ||
+			data->map[data->x - 1][data->y - 1] != 0)
+			mlxData->image[data->y * (data->line_lenght / 4) + data->x]
+			= 0x00ff0000;
+		else
+			mlxData->image[data->y * (data->line_lenght / 4) + data->x]
+			= 0x000000ff;
+	}
+}
+
 void	raycasting(t_data *data, t_texture *texture, t_mlxdata *mlxData,
 					int texNum)
 {
@@ -62,6 +84,7 @@ void	raycasting(t_data *data, t_texture *texture, t_mlxdata *mlxData,
 			texpos += step;
 			my_pytpixl(data, texture, mlxData, texy);
 		}
+		minimap_draw(data, texture, mlxData);
 		data->y++;
 	}
 }
