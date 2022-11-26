@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:08:54 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/26 18:49:17 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/26 19:57:49 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,24 @@ void minimap_draw(t_data *data, t_texture *texture, t_mlxdata *mlxData)
 	{
 		
 		/* printf("x: %d\ny: %d\n",(data->x - (data->screenwidth - data->mapwidth * 4)) / 4, (data->y - data->mapheight * 4) / 4); */
-		if (data->map[(data->x - (data->screenwidth - data->mapwidth * width_del_map)) / width_del_map]
+		if (data->map[(data->x - (data->screenwidth - data->mapwidth * width_del_map)) / width_del_map] 
 				[(data->y) / height_del_map] != 0)
+		{
 			mlxData->image[data->y * (data->line_lenght / 4) + data->x]
 			= 0x00ff0000;
+		}
 		else 
-			mlxData->image[data->y * (data->line_lenght / 4) + data->x]
-			= 0x00000000;
+		{
+			if ( (data->x - (data->screenwidth - data->mapwidth *
+							width_del_map)) / width_del_map == (int)data->posx
+				&& (data->y) / height_del_map == (int)data->posy)
+				mlxData->image[data->y * (data->line_lenght / 4) + data->x]
+				= 0x0000ff00;
+			else
+				mlxData->image[data->y * (data->line_lenght / 4) + data->x]
+				= 0x00000000;
+
+		}
 
 		/* if (data->x == (int)data->posx && data->y == (int)data->posy || */
 		/* 	data->x == (int)data->posx && data->y - 1 == (int)data->posy || */
