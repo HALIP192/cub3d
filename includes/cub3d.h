@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 20:26:07 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/12 17:35:39 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 15:21:37 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,4 +185,7 @@ int				init_floor_ceil_colors(t_texture *texture,
 					char ***texture_split, int i);
 double			ft_abs(double num);
 int				ft_close_window(t_data *data);
+void			minimap_draw(t_data *data, t_texture *texture,
+					t_mlxdata *mlxData);
+
 #endif

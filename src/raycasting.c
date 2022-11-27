@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:08:54 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 15:00:00 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 15:18:33 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,62 +38,6 @@ void	my_pytpixl(t_data *data, t_texture *texture, t_mlxdata *mlxData,
 	else
 		mlxData->image[data->y * (data->line_lenght / 4) + data->x]
 			= texture->imgs[texnum][texture->height[texnum] * texy + texx];
-}
-
-int	inside_minimap(t_data *data, int width_del, int height_del)
-{
-	if (data->x >= (data->screenwidth - data->mapwidth * width_del) &&
-		data->y <= (data->mapheight * height_del))
-		return 1;
-	return 0;
-}
-
-void minimap_draw(t_data *data, t_texture *texture, t_mlxdata *mlxData)
-{
-	int width_del_map;
-	int height_del_map;
-
-	width_del_map = data->screenwidth / (data->mapwidth * 4);
-	height_del_map = data->screenheight / (data->mapheight * 4);
-	if (inside_minimap(data, width_del_map, height_del_map))
-	{
-		
-		/* printf("x: %d\ny: %d\n",(data->x - (data->screenwidth - data->mapwidth * 4)) / 4, (data->y - data->mapheight * 4) / 4); */
-		if (data->map[(data->x - (data->screenwidth - data->mapwidth * width_del_map)) / width_del_map] 
-				[(data->y) / height_del_map] != 0)
-		{
-			mlxData->image[data->y * (data->line_lenght / 4) + data->x]
-			= 0x00ff0000;
-		}
-		else 
-		{
-			if ( fabs((data->x - (data->screenwidth - data->mapwidth *
-							width_del_map)) - data->posx * width_del_map) < width_del_map / 2
-				&& fabs((data->y) - data->posy * height_del_map) < height_del_map / 2)
-				mlxData->image[data->y * (data->line_lenght / 4) + data->x]
-				= 0x0000ff00;
-			else
-				mlxData->image[data->y * (data->line_lenght / 4) + data->x]
-				= 0x00000000;
-
-		}
-
-		/* if (data->x == (int)data->posx && data->y == (int)data->posy || */
-		/* 	data->x == (int)data->posx && data->y - 1 == (int)data->posy || */
-		/* 	data->x - 1 == (int)data->posx && data->y == (int)data->posy || */
-		/* 	data->x - 1 == (int)data->posx && data->y - 1 == (int)data->posy) */
-		/* 	mlxData->image[data->y * (data->line_lenght / 4) + data->x] */
-		/* 	= 0x0000ff00; */
-		/* if (data->map[data->x][data->y] != 0 || */
-		/* 	data->map[data->x][data->y - 1] != 0 || */
-		/* 	data->map[data->x - 1][data->y] != 0 || */
-		/* 	data->map[data->x - 1][data->y - 1] != 0) */
-		/* 	mlxData->image[data->y * (data->line_lenght / 4) + data->x] */
-		/* 	= 0x00ff0000; */
-		/* else */
-		/* 	mlxData->image[data->y * (data->line_lenght / 4) + data->x] */
-		/* 	= 0x000000ff; */
-	}
 }
 
 void	raycasting(t_data *data, t_texture *texture, t_mlxdata *mlxData,
