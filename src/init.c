@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/23 18:49:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 17:03:47 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:07:02 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void	init_mlxdata(t_mlxdata *data, t_data *map_data)
 
 static inline int	init_position2(t_data *data, char *src, int j, int i)
 {
+	(void)src;
 	data->posx = (double)i;
 	data->posy = (double)j;
 	data->planex = 0.0;

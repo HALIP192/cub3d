@@ -6,11 +6,11 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 16:33:43 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 21:06:05 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:39:30 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 t_list	*ft_lstnew(void *content)
 {

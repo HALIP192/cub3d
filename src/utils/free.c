@@ -6,11 +6,11 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 20:37:47 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 21:05:28 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:39:24 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 void	data_cleaner(t_data *data)
 {

@@ -6,10 +6,10 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/09 16:41:08 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 16:08:03 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:38:41 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 int	ft_memcmp(const void *s1, const void *s2, size_t n)
 {

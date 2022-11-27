@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 14:47:07 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 20:43:16 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:10:51 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ int	key_hook_release(int key, t_data *data)
 {
 	t_mouseaction	*mouse;
 
+	(void)data;
 	mouse = mouse_global();
 	if (key == 13)
 		mouse->mov_forward = 0;
