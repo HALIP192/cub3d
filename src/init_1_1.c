@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 19:51:40 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 15:58:45 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:07:29 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,20 +58,6 @@ t_list	*init_screen_and_map(t_data *data, int fd)
 		}
 	}
 	return (init_screen_and_map2(data, fd, list_cur, list_head));
-}
-
-static void	free_list(t_list *head)
-{
-	t_list	*buff;
-
-	while (head)
-	{
-		if (head->content)
-			free(head->content);
-		buff = head;
-		head = head->next;
-		free(buff);
-	}
 }
 
 int	map_init(t_data *data, int fd)

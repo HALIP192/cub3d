@@ -6,11 +6,11 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 16:09:45 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 17:57:52 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:39:28 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 int	ft_isdigit(int c)
 {

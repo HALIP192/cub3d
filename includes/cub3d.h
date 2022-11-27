@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 20:26:07 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 15:21:37 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:29:26 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include "printf_colors.h"
-# include "../utils/get_next_line.h"
+# include "../src/utils/get_next_line.h"
 # include "../minilibx_opengl_20191021/mlx.h"
 # include "stdio.h"
 # include "math.h"

@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:08:54 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 15:18:33 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:09:02 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ void	raycasting(t_data *data, t_texture *texture, t_mlxdata *mlxData,
 
 void	cub3d(t_data *data)
 {	
-	int			texx;
 	int			texnum;
 	t_texture	*texture;
 	t_mlxdata	*mlxdata;

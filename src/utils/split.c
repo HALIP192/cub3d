@@ -6,11 +6,11 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/30 17:59:54 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 17:54:42 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:39:22 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 size_t	words_alloc(char *s, char c)
 {

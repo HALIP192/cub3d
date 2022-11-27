@@ -6,11 +6,11 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/09 16:42:17 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 17:59:00 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:39:31 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 int	ft_max(int a, int b)
 {

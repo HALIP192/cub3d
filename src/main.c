@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/09 20:48:53 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 16:31:28 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:08:07 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ static inline int	print_helper(void)
 
 static inline int	check_argv(char **argv)
 {
-	int		fd;
 	char	**str;
 	int		i;
 

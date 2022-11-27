@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 15:19:59 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 15:37:50 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:21:41 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	minimap_draw(t_data *data, t_texture *texture, t_mlxdata *mlxData)
 	int	width_del_map;
 	int	height_del_map;
 
+	(void)texture;
 	width_del_map = data->screenwidth / (data->mapwidth * 4);
 	height_del_map = data->screenheight / (data->mapheight * 4);
 	if (inside_minimap(data, width_del_map, height_del_map))
