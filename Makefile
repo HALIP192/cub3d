@@ -1,6 +1,6 @@
 CC		=	clang
 
-CFLAGS	=	-Wall -Wextra -Werror -O3 -g
+CFLAGS	=  -O3 -g #-Wall -Wextra -Werror
 
 LDFLAGS = -Lminilibx_opengl_20191021 -lmlx -framework OpenGl -framework AppKit -lm -lz
 

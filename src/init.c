@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/23 18:49:27 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 17:07:02 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 21:29:34 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,29 +52,17 @@ static inline int	init_position2(t_data *data, char *src, int j, int i)
 
 int	init_position(t_data *data, char *src, int j, int i)
 {
+	data->dirx = -1.0;
+	data->diry = 0.0;
 	if (src[i] == 'N')
-	{
-		data->dirx = -1.0;
-		data->diry = 0.0;
-	}
+		data->init_rotation = 0.;
 	else if (src[i] == 'W')
-	{
-		data->dirx = 0.0;
-		data->diry = 1.0;
-	}
+		data->init_rotation = M_PI / 2.;
 	else if (src[i] == 'E')
-	{
-		data->dirx = 0.0;
-		data->diry = -1.0;
-	}
+		data->init_rotation = -(M_PI / 2.);
 	else if (src[i] == 'S')
-	{
-		data->dirx = 1.0;
-		data->diry = 0.0;
-	}
+		data->init_rotation = M_PI / 1.;
 	else
-		return (1);
-	if (i >= data->mapwidth || i <= 0 || j >= data->mapheight || j <= 0)
 		return (1);
 	return (init_position2(data, src, j, i));
 }

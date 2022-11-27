@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/09 20:48:53 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 17:08:07 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 20:12:09 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	main(int argc, char **argv)
 		exit(12);
 	}
 	cub3d(&data);
-	printf("%p\n%p\n%p\n%p\n", &data, mouse, texture, mlxdata);
+	rotate(&data, data.init_rotation);
 	mlx_hook(mlxdata->mlx_win, KEY_PRESS, 0, key_hook, mouse);
 	mlx_hook(mlxdata->mlx_win, KEY_RELEASE, 0, key_hook_release, mouse);
 	mlx_hook(mlxdata->mlx_win, WINDOW_CLOSE, 0, ft_close_window, &data);

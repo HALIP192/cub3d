@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 14:58:05 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 20:58:13 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 20:11:41 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@ void	init_dda(t_data *data)
 	data->raydiry = data->diry + data->planey * data->camerax;
 	data->mapx = (int)data->posx;
 	data->mapy = (int)data->posy;
-	if (data->raydirx == 0)
-		data->raydirx = 1e30;
+	if (fabs(data->raydirx) < 0.01)
+		data->deltadistx = 1e30;
 	else
 		data->deltadistx = ft_abs(1 / data->raydirx);
-	if (data->raydiry == 0)
-		data->raydiry = 1e30;
+	if (fabs(data->raydiry) < 0.01)
+		data->deltadisty = 1e30;
 	else
 		data->deltadisty = ft_abs(1 / data->raydiry);
 }

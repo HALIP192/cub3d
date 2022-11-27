@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:05:55 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/26 19:57:21 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 20:11:16 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,5 +68,4 @@ void	print_map(t_data *data)
 		printf("\n");
 		x++;
 	}
-	printf("x = %f\ny = %f\n", data->posx, data->posy);
 }

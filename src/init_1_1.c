@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 19:51:40 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 17:07:29 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 21:36:57 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,16 +74,25 @@ int	map_init(t_data *data, int fd)
 	while (i < data->mapwidth)
 	{
 		data->map[i] = (int *)malloc(sizeof(int) * data->mapheight);
+		
+		printf("\n");
 		if (!data->map[i])
 			return (1);
 		if (lstcpy(data, map->content, i))
 			return (1);
+
+		int j = 0;
+		while (j < data->mapheight)
+		{
+			printf("%d", data->map[i][j++]);
+		}
 		i++;
 		free(map->content);
 		buff = map;
 		map = map->next;
 		free(buff);
 	}
+	print_map(data);
 	if (validate_map(data))
 		return (1);
 	return (0);

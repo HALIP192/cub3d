@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 20:26:07 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/27 17:29:26 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 19:42:10 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ typedef struct data_s
 	double	camerax;
 	double	raydirx;
 	double	raydiry;
+	double	init_rotation;
 	int		mapx;
 	int		mapy;
 	double	deltadistx;
