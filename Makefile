@@ -43,7 +43,7 @@ OBJ		=	$(addprefix $(OBJ_DIR)/,$(SRC:=.o))
 UTILS_OBJ_DIR = utils_obj
 UTILS_OBJ = $(addprefix $(UTILS_OBJ_DIR)/,$(UTILS:=.o))
 
-NAME		=	cub3d
+NAME		=	cub3D
 
 .PHONY:	all clean fclean re
 
