@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 19:51:40 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/26 18:52:21 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 15:58:45 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ t_list	*init_screen_and_map2(t_data *data, int fd, t_list *list_cur,
 		list_cur = list_cur->next;
 	}
 	free(list_cur);
+	list_cur = NULL;
 	data->mapwidth = width;
 	data->mapheight = height_max;
 	data->screenheight = 720;
@@ -52,16 +53,32 @@ t_list	*init_screen_and_map(t_data *data, int fd)
 		if (!list_cur->content)
 		{
 			printf("Map error.%s:%d\n", __FILE__, __LINE__);
+			free(list_cur);
 			return (NULL);
 		}
 	}
 	return (init_screen_and_map2(data, fd, list_cur, list_head));
 }
 
+static void	free_list(t_list *head)
+{
+	t_list	*buff;
+
+	while (head)
+	{
+		if (head->content)
+			free(head->content);
+		buff = head;
+		head = head->next;
+		free(buff);
+	}
+}
+
 int	map_init(t_data *data, int fd)
 {
 	int		i;
 	t_list	*map;
+	t_list	*buff;
 
 	i = 0;
 	map = init_screen_and_map(data, fd);
@@ -76,7 +93,10 @@ int	map_init(t_data *data, int fd)
 		if (lstcpy(data, map->content, i))
 			return (1);
 		i++;
+		free(map->content);
+		buff = map;
 		map = map->next;
+		free(buff);
 	}
 	if (validate_map(data))
 		return (1);

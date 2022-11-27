@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/23 18:58:46 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 18:07:37 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 17:04:24 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,19 +29,26 @@ char	***kostil(int fd, char ***mas, char *line, int cnt)
 	{
 		if (line[0] == '\n')
 		{
+			free(line);
 			line = get_next_line(fd);
 			continue ;
 		}
 		if (is_line_valid(line))
 		{
-			mas[cnt] = ft_split(line, ' ');
-			cnt++;
+			mas[cnt++] = ft_split(line, ' ');
 		}
 		else
+		{
+			free(line);
 			return (NULL);
+		}
 		if (cnt < 6)
+		{
+			free(line);
 			line = get_next_line(fd);
+		}
 	}
+	free(line);
 	return (mas);
 }
 

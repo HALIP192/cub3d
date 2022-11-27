@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/09 20:48:53 by ntitan            #+#    #+#             */
-/*   Updated: 2022/10/29 20:59:17 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 16:31:28 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@ static inline int	check_argv(char **argv)
 		exit(printf(RED "Invalid file name\n" RESET));
 	if (ft_memcmp(str[1], "cub", ft_strlen(str[1])))
 		exit(printf(RED "Invalid file name\n" RESET));
+	i = 0;
+	while (str[i])
+		free(str[i++]);
+	free(str);
 	return (0);
 }
 
@@ -56,6 +60,7 @@ int	main(int argc, char **argv)
 		exit(12);
 	}
 	cub3d(&data);
+	printf("%p\n%p\n%p\n%p\n", &data, mouse, texture, mlxdata);
 	mlx_hook(mlxdata->mlx_win, KEY_PRESS, 0, key_hook, mouse);
 	mlx_hook(mlxdata->mlx_win, KEY_RELEASE, 0, key_hook_release, mouse);
 	mlx_hook(mlxdata->mlx_win, WINDOW_CLOSE, 0, ft_close_window, &data);
