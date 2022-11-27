@@ -6,7 +6,7 @@
 /*   By: ntitan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 15:08:54 by ntitan            #+#    #+#             */
-/*   Updated: 2022/11/26 19:57:49 by ntitan           ###   ########.fr       */
+/*   Updated: 2022/11/27 15:00:00 by ntitan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ void minimap_draw(t_data *data, t_texture *texture, t_mlxdata *mlxData)
 		}
 		else 
 		{
-			if ( (data->x - (data->screenwidth - data->mapwidth *
-							width_del_map)) / width_del_map == (int)data->posx
-				&& (data->y) / height_del_map == (int)data->posy)
+			if ( fabs((data->x - (data->screenwidth - data->mapwidth *
+							width_del_map)) - data->posx * width_del_map) < width_del_map / 2
+				&& fabs((data->y) - data->posy * height_del_map) < height_del_map / 2)
 				mlxData->image[data->y * (data->line_lenght / 4) + data->x]
 				= 0x0000ff00;
 			else
